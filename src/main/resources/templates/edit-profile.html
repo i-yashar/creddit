@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="row py-5 px-4">
+    <div class="col-md-5 mx-auto"> <!-- Profile widget -->
+        <form
+                th:action="@{/profile/edit}"
+                th:method="post">
+
+            <div class="bg-white shadow rounded overflow-hidden" th:object="${user}">
+
+                <div class="px-4 pt-0 pb-4 cover">
+                    <div class="media align-items-end profile-head">
+                        <div class="profile mr-3"><img
+                                th:src="@{*{profilePicUrl}}"
+                                alt="..." width="130" class="rounded mb-2 img-thumbnail"></div>
+                        <div class="media-body mb-5 text-white">
+                            <label for="firstName" class="text-white font-weight-bold">First Name</label>
+                            <input id="firstName" type="text" th:field="*{firstName}" class="mt-0 mb-0"></input>
+                            <label for="lastName" class="text-white font-weight-bold">Last Name</label>
+                            <input id="lastName" type="text" th:field="*{lastName}" class="mt-0 mb-0"></input>
+                            <label for="username" class="text-white font-weight-bold">Username</label>
+                            <input id="username" type="text" th:field="*{username}" class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-light p-4 d-flex justify-content-end text-center">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block" th:text="*{credits}">0</h5><small
+                                class="text-muted"> <i class="fas fa-image mr-1"></i>Credits</small></li>
+                        <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block">745</h5><small
+                                class="text-muted"> <i class="fas fa-user mr-1"></i>Friends</small></li>
+                    </ul>
+                </div>
+
+                <div class="px-4 py-3"><h5 class="mb-0">Enter profile pic URL:</h5>
+                    <label for="profilePicUrl"></label>
+                    <input id="profilePicUrl" type="text" th:field="*{profilePicUrl}" class="mt-0 mb-0 shadow-sm bg-light" style="width: 350px">
+                </div>
+
+                <div class="px-4 py-3"><h5 class="mb-0">About</h5>
+                    <label for="aboutInfo"></label>
+                    <input id="aboutInfo" type="text" th:field="*{about}" class="p-4 rounded shadow-sm bg-light"></input>
+                </div>
+
+                <div class="row">
+                    <div class="col mx-auto col-md-4">
+                        <div class="button-holder d-flex">
+                            <input type="submit" class="btn btn-info btn-lg" value="Edit profile page"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

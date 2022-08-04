@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="container">
+    <div class="main-body">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="main-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
+                <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+            </ol>
+        </nav>
+        <!-- /Breadcrumb -->
+
+        <h2 class="text-white font-weight-bold text-center">Create new community</h2>
+
+        <form
+                th:action="@{/community/create}"
+                th:method="post"
+                th:object="${createCommunityDTO}"
+                id="createCommunityForm">
+            <div class="row gutters-sm">
+                <div class="col-md-8 mb-3 mx-auto">
+                    <div class="communityCard card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <label for="communityPhoto" class="font-weight-bold">Community photo URL</label>
+                                <input id="communityPhoto" type="text" th:field="*{communityPhotoUrl}"
+                                       class="mt-0 mb-0"/>
+
+                                <label for="communityName" class="font-weight-bold">Community Name</label>
+                                <input id="communityName" type="text" th:field="*{name}" class="mt-0 mb-0"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="communityCard card mt-3">
+                        <h5 class="px-4 py-3 text-center">About this community</h5>
+                        <div class="p-4 rounded shadow-sm bg-light d-flex flex-column align-items-center text-center">
+                            <label for="aboutInfo" class="text-white font-weight-bold"></label>
+                            <textarea id="aboutInfo" style="resize: none" rows="5" cols="80"
+                                      form="createCommunityForm"
+                                      th:field="*{description}"
+                                      name="description"
+                                      class="form-control small mb-4"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mx-auto">
+
+                    <div class="row">
+                        <div class="col mx-auto col-md-4">
+                            <div class="button-holder d-flex">
+                                <input type="submit" class="btn btn-info btn-lg" value="Create community"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+</body>
+</html>

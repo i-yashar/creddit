@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="row py-5 px-4">
+    <div class="col-md-5 mx-auto"> <!-- Profile widget -->
+        <div class="bg-white shadow rounded overflow-hidden" th:object="${user}">
+            <div class="px-4 pt-0 pb-4 cover">
+                <div class="media align-items-end profile-head">
+                    <div class="profile mr-3"><img
+                            th:src="@{*{profilePicUrl}}"
+                            alt="..." width="130" class="rounded mb-2 img-thumbnail"><a th:if="${#authentication.name} == *{username}" href="/profile/edit"
+                                                                                        class="btn btn-outline-dark btn-sm btn-block">Edit
+                        profile</a></div>
+                    <div class="media-body mb-5 text-white"><h4 class="mt-0 mb-0" th:text="|*{firstName} *{lastName}|">Full Name</h4>
+                        <p class="small mb-4" th:text="*{username}"><i class="fas fa-map-marker-alt mr-2"></i>Username</p></div>
+                </div>
+            </div>
+            <div class="bg-light p-4 d-flex justify-content-end text-center">
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block" th:text="*{credits}">0</h5><small
+                            class="text-muted"> <i class="fas fa-image mr-1"></i>Credits</small></li>
+                    <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block">745</h5><small
+                            class="text-muted"> <i class="fas fa-user mr-1"></i>Friends</small></li>
+                </ul>
+            </div>
+            <div class="px-4 py-3"><h5 class="mb-0">About</h5>
+                <div class="p-4 rounded shadow-sm bg-light"><p th:text="*{about}" class="font-italic mb-0">About</p>
+                    </div>
+            </div>
+            <div class="py-4 px-4">
+                <div class="d-flex align-items-center justify-content-between mb-3"><h5 class="mb-0">Recent
+                    posts</h5><a id="showAllBtn" href="javascript:void(0)" class="btn btn-link text-muted">Hide all</a></div>
+                <div class="row" th:each="post : ${posts}">
+                    <div class="post-frame card card-body mt-3">
+                        <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+
+                            <div class="post-header media-body">
+                                <h4 class="media-title font-weight-semibold">
+                                    <th:block th:text="${post.title}">Post Title</th:block>
+                                </h4>
+
+                                <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
+                                    <li class="list-inline-item">Community:
+                                        <a href="#" class="text-muted" data-abc="true" th:text="${post.community}">Phones</a>
+                                    </li>
+                                    <li class="list-inline-item">Posted by:
+                                        <a href="#" class="text-muted" data-abc="true" th:text="${post.owner}">Mobiles</a>
+                                    </li>
+                                </ul>
+
+                                <p class="mb-3 post-description" th:text="${post.description}">Description</p>
+
+                                <ul class="list-inline list-inline-dotted mb-0">
+                                    <th:block sec:authorize="isAuthenticated()">
+                                        <li class="list-inline-item">
+                                            <a class="btn btn-primary" th:href="@{/dashboard/upvote/{postId}(postId = ${post.id})}" role="button">Upvote <span class="badge bg-secondary" th:text="${post.upvoteCount}">0</span></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a class="btn btn-primary" th:href="@{/dashboard/downvote/{postId}(postId = ${post.id})}" role="button">Downvote</a>
+                                        </li>
+                                        <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')" th:if="${principal.username == post.owner}">
+                                            <a class="btn btn-primary" th:href="@{/dashboard/delete/{postId}(postId = ${post.id})}" role="button">Delete</a>
+                                        </li>
+                                    </th:block>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>

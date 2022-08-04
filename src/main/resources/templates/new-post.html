@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="container-fluid">
+        <form
+                id="addPostForm"
+                th:action="@{/posts/addPost}"
+                th:method="post"
+                th:object="${addPostModel}"
+                class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center">
+
+            <div class="row">
+                <div class="form-group mx-auto col-md-6 mb-3">
+                    <label for="title" class="text-white font-weight-bold">Post title</label>
+                    <input id="title"
+                           th:field="*{title}"
+                           th:errorclass="is-invalid"
+                           name="title"
+                           type="text" min="2" max="20" class="form-control"
+                           placeholder="Title"/>
+                    <p class="invalid-feedback errors alert alert-danger">
+                        Title is required and should be between 10 and 100 symbols.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group mx-auto col-md-6 mb-3">
+                    <label for="community" class="text-white font-weight-bold">Community</label>
+                    <input id="community"
+                           th:field="*{community}"
+                           th:errorclass="is-invalid"
+                           name="community"
+                           type="text" min="2" max="20" class="form-control"
+                           placeholder="Community names begin with a '_'"/>
+                    <div class="invalid-feedback errors alert alert-danger">
+                        <div th:each="err : ${#fields.errors('community')}">
+                            <span th:text="${err}"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group mx-auto col-md-6 mb-3">
+                    <label for="description" class="text-white font-weight-bold">Description</label> <br>
+                    <textarea id="description" style="resize: none" rows="12" cols="80"
+                              th:field="*{description}"
+                              th:errorclass="is-invalid"
+                              name="description" form="addPostForm" class="form-control"
+                              placeholder="Enter description"></textarea>
+                    <p class="invalid-feedback errors alert alert-danger">
+                        Description is required and must contain at least 10 symbols.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mx-auto col-md-4">
+                    <div class="button-holder d-flex">
+                        <input type="submit" class="btn btn-info btn-lg" value="Create post"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+</div>
+
+</body>
+</html>

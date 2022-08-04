@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="container-fluid">
+    <div class="row text-justify">
+        <div class="col-10 bg-transparent text-white">
+            <h2 class="text-center text-justify text-white">Welcome to dashboard!</h2>
+            <h3>Our trending posts</h3>
+
+            <div th:each="post : ${posts}" class="post-frame card card-body mt-3">
+                <div th:id="${'postNo' + post.id}" class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+
+                    <div class="post-header media-body">
+                        <h4 class="media-title font-weight-semibold">
+                            <th:block th:text="${post.title}">Post Title</th:block>
+                        </h4>
+
+                        <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
+                            <li class="list-inline-item">Community:
+                                <a th:href="@{/community/{communityName}(communityName = ${#strings.substring(post.community, 1)})}" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
+                            </li>
+                            <li class="list-inline-item">Posted by:
+                                <a th:href="@{/profile/user/{username}(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
+                            </li>
+                        </ul>
+
+                        <p class="mb-3 post-description" th:text="${post.description}">Description</p>
+
+                        <ul class="list-inline list-inline-dotted mb-0">
+                            <li class="list-inline-item">
+                                <a class="upVoteBtn btn btn-primary" href="javascript:void(0)"
+                                   role="button">Upvote <span class="badge bg-secondary"
+                                                              th:text="${post.upvoteCount}">0</span></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="downVoteBtn btn btn-primary"
+                                   href="javascript:void(0)"
+                                   role="button">Downvote</a>
+                            </li>
+                            <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
+                                th:if="${principal.username == post.owner}">
+                                <a class="deleteBtn btn btn-primary" th:href="@{/posts/delete/{postId}(postId = ${post.id})}"
+                                   role="button">Delete</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="showCommentsBtn btn btn-primary"
+                                   th:href="@{/posts/comments/{postId}(postId = ${post.id})}"
+                                   role="button">Show comments</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="addCommentBtn btn btn-primary"
+                                   th:href="@{/posts/addComment/{postId}(postId = ${post.id})}"
+                                   role="button">Add comment</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-2">
+            <div class="dashboard-controlls sticky-top mt-5">
+                <div class="mt-5 sticky-top">
+                    <a th:href="@{/posts/addPost}" class="btn btn-dark">Add new post</a>
+                </div>
+                <div class="dropdown show mt-3 sticky-top">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Order by
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="#">Most upvoted</a>
+                        <a class="dropdown-item" href="#">Most commented</a>
+                        <a class="dropdown-item" href="#">Most recent</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="/js/dashboard-action.js"></script>
+</body>
+</html>

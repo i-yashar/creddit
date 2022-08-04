@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="container-fluid col-md-8">
+    <div th:object="${post}" class="row text-justify">
+
+        <div class="post-frame card card-body mt-3">
+            <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+
+                <div class="post-header media-body">
+                    <h4 class="media-title font-weight-semibold">
+                        <th:block th:text="*{title}">Post Title</th:block>
+                    </h4>
+
+                    <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
+                        <li class="list-inline-item">Community:
+                            <a href="#" class="text-muted" data-abc="true" th:text="*{community}">Community</a>
+                        </li>
+                        <li class="list-inline-item">Posted by:
+                            <a href="#" class="text-muted" data-abc="true" th:text="*{owner}">Owner</a>
+                        </li>
+                    </ul>
+
+                    <p class="mb-3 post-description" th:text="*{description}">Description</p>
+
+                    <ul class="list-inline list-inline-dotted mb-0">
+                        <li class="list-inline-item">
+                            <a class="btn btn-primary" th:href="@{/dashboard/upvote/{postId}(postId = ${post.id})}"
+                               role="button">Upvote <span class="badge bg-secondary"
+                                                          th:text="*{upvoteCount}">0</span></a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a class="btn btn-primary"
+                               th:href="@{/dashboard/downvote/{postId}(postId = ${post.id})}"
+                               role="button">Downvote</a>
+                        </li>
+                        <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
+                            th:if="${principal.username == post.owner}">
+                            <a class="btn btn-primary" th:href="@{/dashboard/delete/{postId}(postId = ${post.id})}"
+                               role="button">Delete</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <h2 class="text-white mt-5">Your comment</h2>
+
+    <form id="addCommentForm"
+          th:object="${addCommentDTO}"
+          th:action="@{/posts/addComment/{postId}(postId = ${post.id})}"
+          th:method="post"
+          class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center">
+        <div class="row">
+            <div class="form-group mx-auto col-md-12 mb-3">
+                <label for="comment" class="text-white font-weight-bold"></label> <br>
+                <textarea id="comment" style="resize: none" rows="5" cols="100"
+                          th:field="${addCommentDTO.comment}"
+                          th:errorclass="is-invalid"
+                          name="comment" form="addCommentForm" class="form-control"
+                          placeholder="Enter your comment here..."></textarea>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Comment is required and must contain at least 20 symbols.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mx-auto col-md-4">
+                <div class="button-holder d-flex">
+                    <input type="submit" class="btn btn-info btn-lg" value="Add comment"/>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</div>
+
+</body>
+</html>

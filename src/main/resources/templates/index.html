@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head::head"></head>
+
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+  Navbar
+</div>
+
+<div class="jumbotron mx-auto col-8">
+  <h1 class="display-4">Welcome to Creddit!</h1>
+  <p class="lead">Creddit is an awesome forum website, with many awesome communities and users who are open for discussion on any topic that you have!</p>
+  <hr class="my-4">
+  <div sec:authorize="isAnonymous()" class="row">
+    <p class="lead"><a href="/users/login">Log in</a> to start exploring what's popular among our users and share what you think.</p>
+    <p class="lead">Don't have a profile yet? <a href="/users/register">Register</a> now to be part of our awesome community.</p>
+  </div>
+</div>
+
+<div>
+  <footer></footer>
+</div>
+</body>
+</html>

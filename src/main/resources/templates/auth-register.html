@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head::head"></head>
+
+
+<body>
+
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+
+<div class="container">
+    <h2 class="text-center text-white">Register</h2>
+    <form
+            th:action="@{/users/register}"
+            th:method="post"
+            th:object="${registerModel}"
+            class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center">
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="username" class="text-white font-weight-bold">Username</label>
+                <input id="username"
+                       th:field="*{username}"
+                       th:errorclass="is-invalid"
+                       name="username"
+                       type="text" min="2" max="20" class="form-control"
+                       placeholder="Username"/>
+                <div class="invalid-feedback errors alert alert-danger">
+                    <div th:each="err : ${#fields.errors('username')}">
+                        <span th:text="${err}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="email" class="text-white font-weight-bold">Email</label>
+                <input id="email"
+                       th:field="*{email}"
+                       th:errorclass="is-invalid"
+                       name="email"
+                       type="text" min="2" max="20" class="form-control"
+                       placeholder="Email"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Email is required.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="firstName" class="text-white font-weight-bold">First Name</label>
+                <input
+                        id="firstName"
+                        th:field="*{firstName}"
+                        th:errorclass="is-invalid"
+                        name="firstName"
+                        type="text" min="2" max="50"
+                        class="form-control"
+                        placeholder="First Name"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    First name is required and should be between 2 and 20 symbols.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="lastName" class="text-white font-weight-bold">Last Name</label>
+                <input
+                        id="lastName"
+                        th:field="*{lastName}"
+                        name="lastName"
+                        type="text" min="2" max="50"
+                        class="form-control"
+                        placeholder="Last Name"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="password" class="text-white font-weight-bold">Password</label>
+                <input id="password"
+                       th:field="*{password}"
+                       th:errorclass="is-invalid"
+                       name="password"
+                       type="password" min="2" max="20" class="form-control"
+                       placeholder="Password"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Password is required and should be between 5 and 30 symbols.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group mx-auto col-md-6 mb-3">
+                <label for="confirmPassword" class="text-white font-weight-bold">Confirm Password</label>
+                <input id="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       th:errorclass="is-invalid"
+                       name="confirmPassword"
+                       type="password" min="2" max="20" class="form-control"
+                       placeholder="Confirm your password"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Passwords should match.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mx-auto col-md-4">
+                <div class="button-holder d-flex">
+                    <input type="submit" class="btn btn-info btn-lg" value="Create account"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
