@@ -3,10 +3,7 @@ package bg.softuni.creddit.service;
 import bg.softuni.creddit.model.dto.AddCommentDTO;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.model.dto.PostVoteDTO;
-import bg.softuni.creddit.model.entity.Community;
-import bg.softuni.creddit.model.entity.Post;
-import bg.softuni.creddit.model.entity.User;
-import bg.softuni.creddit.model.entity.Vote;
+import bg.softuni.creddit.model.entity.*;
 import bg.softuni.creddit.model.view.CommentDisplayView;
 import bg.softuni.creddit.model.view.PostDisplayView;
 import bg.softuni.creddit.repository.PostRepository;
@@ -24,14 +21,16 @@ public class PostService {
     private final CommentService commentService;
     private final UserService userService;
     private final VoteService voteService;
+    private final CommentVoteService commentVoteService;
     private final PostRepository postRepository;
     private final CommunityService communityService;
     private final ModelMapper modelMapper;
 
-    public PostService(CommentService commentService, UserService userService, VoteService voteService, PostRepository postRepository, CommunityService communityService, ModelMapper modelMapper) {
+    public PostService(CommentService commentService, UserService userService, VoteService voteService, CommentVoteService commentVoteService, PostRepository postRepository, CommunityService communityService, ModelMapper modelMapper) {
         this.commentService = commentService;
         this.userService = userService;
         this.voteService = voteService;
+        this.commentVoteService = commentVoteService;
         this.postRepository = postRepository;
         this.communityService = communityService;
         this.modelMapper = modelMapper;
@@ -46,7 +45,10 @@ public class PostService {
                 .map(p -> {
                     User user = this.userService.getCurrentUser();
                     if(user != null) {
-                        Vote vote = this.voteService.findVoteByUserAndPost(this.userService.getCurrentUser(), this.getPostById(p.getId()));
+                        Vote vote = this.voteService.findVoteByUserAndPost(
+                                user,
+                                this.getPostById(p.getId())
+                        );
                         p.setUpvoteStatus(vote.getValue());
                     }
                     return p;
@@ -57,11 +59,36 @@ public class PostService {
     public PostDisplayView retrievePostById(Long postId) {
         Post post = this.getPostById(postId);
 
-        return this.modelMapper.map(post, PostDisplayView.class);
+        PostDisplayView postDisplayView = this.modelMapper.map(post, PostDisplayView.class);
+
+        User user = this.userService.getCurrentUser();
+
+        if(user != null) {
+            Vote vote = this.voteService.findVoteByUserAndPost(
+                    user,
+                    this.getPostById(postDisplayView.getId())
+            );
+            postDisplayView.setUpvoteStatus(vote.getValue());
+        }
+
+        return postDisplayView;
     }
 
     public List<CommentDisplayView> loadPostComments(Long postId) {
-        return this.commentService.findAllCommentsOnPost(postId);
+        return this.commentService.findAllCommentsOnPost(postId)
+                .stream()
+                .map(c -> {
+                    User user = this.userService.getCurrentUser();
+                    if(user != null) {
+                        CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
+                                user,
+                                this.commentService.getCommentById(c.getId())
+                        );
+                        c.setUpvoteStatus(commentVote.getValue());
+                    }
+                    return c;
+                })
+                .collect(Collectors.toList());
     }
 
     public void addPost(AddPostDTO addPostDTO, String username) {

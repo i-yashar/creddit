@@ -36,12 +36,12 @@
 
                         <ul class="list-inline list-inline-dotted mb-0">
                             <li class="list-inline-item">
-                                <a class="upVoteBtn btn btn-primary" href="javascript:void(0)"
+                                <a class="upVoteBtn btn" th:classappend="${post.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'" href="javascript:void(0)"
                                    role="button">Upvote <span class="badge bg-secondary"
                                                               th:text="${post.upvoteCount}">0</span></a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="downVoteBtn btn btn-primary"
+                                <a class="downVoteBtn btn" th:classappend="${post.getUpvoteStatus() == -1} ? 'btn-danger' : 'btn-primary'"
                                    href="javascript:void(0)"
                                    role="button">Downvote</a>
                             </li>

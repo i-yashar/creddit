@@ -1,8 +1,9 @@
 package bg.softuni.creddit.web.rest;
 
+import bg.softuni.creddit.model.dto.CommentVoteDTO;
 import bg.softuni.creddit.model.dto.PostVoteDTO;
+import bg.softuni.creddit.service.CommentService;
 import bg.softuni.creddit.service.PostService;
-import bg.softuni.creddit.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +16,11 @@ import java.security.Principal;
 @RequestMapping("/api/posts")
 public class PostRestController {
     private final PostService postService;
+    private final CommentService commentService;
 
-    public PostRestController(PostService postService) {
+    public PostRestController(PostService postService, CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/upvote/{postId}")
@@ -32,5 +35,19 @@ public class PostRestController {
                                               Principal principal) {
         PostVoteDTO postVoteDTO = this.postService.downVotePost(principal.getName(), postId);
         return ResponseEntity.ok(postVoteDTO);
+    }
+
+    @GetMapping("/comments/upvote/{commentId}")
+    public ResponseEntity<CommentVoteDTO> upVoteComment(@PathVariable(name = "commentId") Long commentId,
+                                                        Principal principal) {
+        CommentVoteDTO commentVoteDTO = this.commentService.upVoteComment(principal.getName(), commentId);
+        return ResponseEntity.ok(commentVoteDTO);
+    }
+
+    @GetMapping("/comments/downvote/{commentId}")
+    public ResponseEntity<CommentVoteDTO> downVoteComment(@PathVariable(name = "commentId") Long commentId,
+                                                        Principal principal) {
+        CommentVoteDTO commentVoteDTO = this.commentService.downVoteComment(principal.getName(), commentId);
+        return ResponseEntity.ok(commentVoteDTO);
     }
 }

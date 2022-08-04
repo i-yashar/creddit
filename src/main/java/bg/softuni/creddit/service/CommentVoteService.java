@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CommentVoteService {
-    private CommentVoteRepository commentVoteRepository;
+    private final CommentVoteRepository commentVoteRepository;
 
     public CommentVoteService(CommentVoteRepository commentVoteRepository) {
         this.commentVoteRepository = commentVoteRepository;

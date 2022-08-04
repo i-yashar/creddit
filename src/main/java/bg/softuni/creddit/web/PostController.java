@@ -46,9 +46,10 @@ public class PostController {
 
     @GetMapping("/comments/upvote/{postId}/{commentId}")
     public String upvoteComment(@PathVariable(name = "postId") Long postId,
-                                @PathVariable(name = "commentId") Long commentId) {
+                                @PathVariable(name = "commentId") Long commentId,
+                                Principal principal) {
 
-//        this.commentService.upvoteComment(commentId);
+        this.commentService.upVoteComment(principal.getName(), commentId);
 
         return "redirect:/posts/comments/" + postId;
     }

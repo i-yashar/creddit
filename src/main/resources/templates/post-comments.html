@@ -13,7 +13,7 @@
     <div class="row text-justify">
 
             <div th:object="${post}" class="post-frame card card-body mt-3">
-                <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+                <div th:id="${'postNo' + post.id}" class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
 
                     <div class="post-header media-body">
                         <h4 class="media-title font-weight-semibold">
@@ -22,10 +22,10 @@
 
                         <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
                             <li class="list-inline-item">Community:
-                                <a href="#" class="text-muted" data-abc="true" th:text="*{community}">Community</a>
+                                <a th:href="@{/community/{communityName}(communityName = ${#strings.substring(post.community, 1)})}" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
                             </li>
                             <li class="list-inline-item">Posted by:
-                                <a href="#" class="text-muted" data-abc="true" th:text="*{owner}">Owner</a>
+                                <a th:href="@{/profile/user/{username}(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
                             </li>
                         </ul>
 
@@ -33,13 +33,13 @@
 
                         <ul class="list-inline list-inline-dotted mb-0">
                             <li class="list-inline-item">
-                                <a class="btn btn-primary" th:href="@{/dashboard/upvote/{postId}(postId = ${post.id})}"
+                                <a class="upVoteBtn btn" th:classappend="${post.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'" href="javascript:void(0)"
                                    role="button">Upvote <span class="badge bg-secondary"
-                                                              th:text="*{upvoteCount}">0</span></a>
+                                                              th:text="${post.upvoteCount}">0</span></a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="btn btn-primary"
-                                   th:href="@{/dashboard/downvote/{postId}(postId = ${post.id})}"
+                                <a class="downVoteBtn btn" th:classappend="${post.getUpvoteStatus() == -1} ? 'btn-danger' : 'btn-primary'"
+                                   href="javascript:void(0)"
                                    role="button">Downvote</a>
                             </li>
                             <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
@@ -64,13 +64,13 @@
 
     <div th:each="comment : ${comments}" class="row text-justify">
         <div class="post-frame card card-body mt-3">
-            <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+            <div th:id="${'commentNo' + comment.id}" class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
 
                 <div class="post-header media-body">
 
                     <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
                         <li class="list-inline-item">Posted by:
-                            <a href="#" class="text-muted" data-abc="true" th:text="${comment.owner}">Owner</a>
+                            <a th:href="@{/profile/user/{username}(username = ${comment.owner})}" class="text-muted" data-abc="true" th:text="${comment.owner}">Owner</a>
                         </li>
                     </ul>
 
@@ -78,13 +78,14 @@
 
                     <ul class="list-inline list-inline-dotted mb-0">
                         <li class="list-inline-item">
-                            <a class="btn btn-primary btn-sm" href=""
+                            <a class="upVoteCommentBtn btn btn-sm" th:classappend="${comment.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'"
+                               href="javascript:void(0)"
                                role="button">Upvote <span class="badge bg-secondary"
                                                           th:text="${comment.upvoteCount}">0</span></a>
                         </li>
                         <li class="list-inline-item">
-                            <a class="btn btn-primary btn-sm"
-                               href=""
+                            <a class="downVoteCommentBtn btn btn-sm" th:classappend="${comment.getUpvoteStatus() == -1} ? 'btn-danger' : 'btn-primary'"
+                               href="javascript:void(0)"
                                role="button">Downvote</a>
                         </li>
                         <li class="list-inline-item btn-sm" sec:authorize="hasRole('ROLE_MODERATOR')">
@@ -99,6 +100,7 @@
     </div>
 
 </div>
-
+<script src="/js/dashboard-action.js"></script>
+<script src="/js/comment-action.js"></script>
 </body>
 </html>
