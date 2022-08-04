@@ -1,7 +1,6 @@
 package bg.softuni.creddit.service;
 
 import bg.softuni.creddit.model.dto.CommentVoteDTO;
-import bg.softuni.creddit.model.dto.PostVoteDTO;
 import bg.softuni.creddit.model.entity.*;
 import bg.softuni.creddit.model.view.CommentDisplayView;
 import bg.softuni.creddit.repository.CommentRepository;
@@ -17,11 +16,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentVoteService commentVoteService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
-    public CommentService(CommentRepository commentRepository, CommentVoteService commentVoteService, ModelMapper modelMapper) {
+    public CommentService(CommentRepository commentRepository, CommentVoteService commentVoteService, UserService userService, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
         this.commentVoteService = commentVoteService;
+        this.userService = userService;
         this.modelMapper = modelMapper;
     }
 
@@ -50,7 +51,7 @@ public class CommentService {
         owner.setCredits(owner.getCredits() + comment.getUpvoteCount() / 5);
 
         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
-                owner,
+                this.userService.getUserByUsername(username),
                 comment
         );
 
@@ -82,7 +83,7 @@ public class CommentService {
         owner.setCredits(owner.getCredits() + comment.getUpvoteCount() / 5);
 
         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
-                owner,
+                this.userService.getUserByUsername(username),
                 comment
         );
 
