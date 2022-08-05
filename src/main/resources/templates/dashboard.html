@@ -11,7 +11,7 @@
 
 <div class="container-fluid">
     <div class="row text-justify">
-        <div class="col-10 bg-transparent text-white">
+        <div class="mx-auto col-10 bg-transparent text-white">
             <h2 class="text-center text-justify text-white">Welcome to dashboard!</h2>
             <h3>Our trending posts</h3>
 
@@ -67,24 +67,71 @@
             </div>
 
         </div>
-        <div class="col-2">
-            <div class="dashboard-controlls sticky-top mt-5">
-                <div class="mt-5 sticky-top">
-                    <a th:href="@{/posts/addPost}" class="btn btn-dark">Add new post</a>
-                </div>
-                <div class="dropdown show mt-3 sticky-top">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Order by
-                    </a>
+<!--        <div class="col-2">-->
+<!--            <div class="dashboard-controlls sticky-top mt-5">-->
+<!--                <div class="mt-5 sticky-top">-->
+<!--                    <a th:href="@{/posts/addPost}" class="btn btn-dark">Add new post</a>-->
+<!--                </div>-->
+<!--                <div class="dropdown show mt-3 sticky-top">-->
+<!--                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"-->
+<!--                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        Order by-->
+<!--                    </a>-->
 
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="#">Most upvoted</a>
-                        <a class="dropdown-item" href="#">Most commented</a>
-                        <a class="dropdown-item" href="#">Most recent</a>
-                    </div>
-                </div>
-            </div>
+<!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">-->
+<!--                        <a class="dropdown-item" href="#">Most upvoted</a>-->
+<!--                        <a class="dropdown-item" href="#">Most commented</a>-->
+<!--                        <a class="dropdown-item" href="#">Most recent</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="mt-3 container-fluid container-fluid row justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${posts.isFirst()} ? 'disabled' : ''">
+                        <a th:unless="${posts.isFirst()}"
+                           th:href="@{/dashboard(size=${posts.getSize()},page=0)}"
+                           class="page-link" href="#">First</a>
+                        <a th:if="${posts.isFirst()}"
+                           class="page-link" href="#">First</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${posts.hasPrevious() ? '' : 'disabled'}">
+                        <a th:if="${posts.hasPrevious()}"
+                           th:href="@{/dashboard(size=${posts.getSize()},page=${posts.getNumber() - 1})}"
+                           class="page-link" href="#">Previous</a>
+                        <a th:unless="${posts.hasPrevious()}"
+                           class="page-link" href="#">Previous</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${posts.hasNext() ? '' : 'disabled'}">
+                        <a th:if="${posts.hasNext()}"
+                           th:href="@{/dashboard(size=${posts.getSize()},page=${posts.getNumber() + 1})}"
+                           class="page-link" href="#">Next</a>
+                        <a th:unless="${posts.hasNext()}"
+                           class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${posts.isLast()} ? 'disabled' : ''">
+                        <a th:unless="${posts.isLast()}"
+                           th:href="@{/dashboard(size=${posts.getSize()},page=${posts.getTotalPages() - 1})}"
+                           class="page-link" href="#">Last</a>
+                        <a th:if="${posts.isLast()}"
+                           class="page-link" href="#">Last</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 

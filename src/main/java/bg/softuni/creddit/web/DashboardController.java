@@ -3,6 +3,8 @@ package bg.softuni.creddit.web;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.service.PostService;
 import bg.softuni.creddit.service.UserService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +27,12 @@ public class DashboardController {
 
 
     @GetMapping(path = {"", "/"})
-    public String index(Model model) {
-        model.addAttribute("posts", this.postService.retrieveAllPosts());
+    public String index(Model model,
+                        @PageableDefault(
+                                size = 5,
+                                page = 0
+                        ) Pageable pageable) {
+        model.addAttribute("posts", this.postService.retrieveAllPostsPaginationEnabled(pageable));
         return "dashboard";
     }
 

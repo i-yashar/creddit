@@ -8,8 +8,17 @@ public class CommunityView {
     private String owner;
     private LocalDate createdOn;
     private String communityPhotoUrl;
+    private boolean hasCurrentUserJoined = false;
 
     public CommunityView() {
+    }
+
+    public boolean isHasCurrentUserJoined() {
+        return hasCurrentUserJoined;
+    }
+
+    public void setHasCurrentUserJoined(boolean hasCurrentUserJoined) {
+        this.hasCurrentUserJoined = hasCurrentUserJoined;
     }
 
     public String getCommunityPhotoUrl() {

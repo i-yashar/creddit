@@ -8,6 +8,8 @@ import bg.softuni.creddit.model.view.CommentDisplayView;
 import bg.softuni.creddit.model.view.PostDisplayView;
 import bg.softuni.creddit.repository.PostRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,24 @@ public class PostService {
         this.postRepository = postRepository;
         this.communityService = communityService;
         this.modelMapper = modelMapper;
+    }
+
+    public Page<PostDisplayView> retrieveAllPostsPaginationEnabled(Pageable pageable) {
+        Page<Post> allPosts = this.postRepository.findAll(pageable);
+
+        return allPosts
+                .map(p -> modelMapper.map(p, PostDisplayView.class))
+                .map(p -> {
+                    User user = this.userService.getCurrentUser();
+                    if(user != null) {
+                        Vote vote = this.voteService.findVoteByUserAndPost(
+                                user,
+                                this.getPostById(p.getId())
+                        );
+                        p.setUpvoteStatus(vote.getValue());
+                    }
+                    return p;
+                });
     }
 
     public List<PostDisplayView> retrieveAllPosts() {
