@@ -1,6 +1,7 @@
 package bg.softuni.creddit.web;
 
 import bg.softuni.creddit.model.dto.CreateCommunityDTO;
+import bg.softuni.creddit.model.validation.SecurityCheck;
 import bg.softuni.creddit.model.view.CommunityView;
 import bg.softuni.creddit.service.CommunityService;
 import bg.softuni.creddit.service.PostService;
@@ -74,6 +75,7 @@ public class CommunityController {
     }
 
     @PostMapping("/create")
+    @SecurityCheck
     public String createCommunity(@Valid CreateCommunityDTO createCommunityDTO,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes,

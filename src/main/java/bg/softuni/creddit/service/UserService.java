@@ -67,6 +67,7 @@ public class UserService {
         user.setCredits(0);
         user.setAbout("You don't have any info in your about section yet. Click edit profile and type something interesting about yourself :)");
         user.setProfilePicUrl("https://images.unsplash.com/placeholder-avatars/extra-large.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128&s=ee8bbf5fb8d6e43aaaa238feae2fe90d");
+        user.setCreatedCommunitiesCount(0);
 
         userRepository.save(user);
         login(user);

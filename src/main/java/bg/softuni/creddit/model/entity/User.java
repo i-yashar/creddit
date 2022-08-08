@@ -42,10 +42,20 @@ public class User {
 
     private String profilePicUrl;
 
+    private Integer createdCommunitiesCount;
+
     @OneToMany(mappedBy = "owner")
     private List<Post> posts;
 
     public User() {
+    }
+
+    public Integer getCreatedCommunitiesCount() {
+        return createdCommunitiesCount;
+    }
+
+    public void setCreatedCommunitiesCount(Integer createdCommunitiesCount) {
+        this.createdCommunitiesCount = createdCommunitiesCount;
     }
 
     public String getProfilePicUrl() {

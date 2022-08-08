@@ -51,6 +51,15 @@
                                       name="description"
                                       class="form-control small mb-4"></textarea>
                         </div>
+
+                        <div class="pb-3 px-5 d-flex flex-column align-items-center text-center">
+                            <label for="securityCheck" class="font-weight-bold"><p>Security check.</p>
+                                Enter "even" if the following number is even and "odd" otherwise:
+                                <h5 th:text="${number}">Number</h5></label>
+                            <input id="securityCheck"
+                                   name="answer"
+                                   type="text" class="mt-0 mb-0"/>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-8 mx-auto">

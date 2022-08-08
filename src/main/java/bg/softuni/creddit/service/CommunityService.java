@@ -93,10 +93,14 @@ public class CommunityService {
     }
 
     public void createCommunity(CreateCommunityDTO createCommunityDTO, String creator) {
+        User user = this.userService.getUserByUsername(creator);
+
         Community community = this.modelMapper.map(createCommunityDTO, Community.class);
         community.setMembers(new HashSet<>());
-        community.setCreatedBy(this.userService.getUserByUsername(creator));
+        community.setCreatedBy(user);
         community.setCreatedOn(LocalDate.now());
+
+        user.setCreatedCommunitiesCount(user.getCreatedCommunitiesCount() + 1);
 
         this.communityRepository.save(community);
     }
