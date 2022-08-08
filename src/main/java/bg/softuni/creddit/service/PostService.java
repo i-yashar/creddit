@@ -104,7 +104,6 @@ public class PostService {
                                 user,
                                 this.commentService.getCommentById(c.getId())
                         );
-                        System.out.println(c.getId() + " " + commentVote.getValue());
                         c.setUpvoteStatus(commentVote.getValue());
                     }
                     return c;

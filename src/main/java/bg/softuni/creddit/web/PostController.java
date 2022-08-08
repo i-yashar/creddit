@@ -19,11 +19,9 @@ import java.security.Principal;
 public class PostController {
 
     private final PostService postService;
-    private final CommentService commentService;
 
     public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
-        this.commentService = commentService;
     }
 
     @ModelAttribute("addCommentDTO")
@@ -36,43 +34,17 @@ public class PostController {
         return new AddPostDTO();
     }
 
-    @GetMapping("/comments/{postId}")
-    public String showComments(@PathVariable(name = "postId") Long postId, Model model) {
+    @GetMapping("/{postId}/comments")
+    public String showComments(@PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", this.postService.retrievePostById(postId));
         model.addAttribute("comments", this.postService.loadPostComments(postId));
 
         return "post-comments";
     }
 
-    @GetMapping("/comments/upvote/{postId}/{commentId}")
-    public String upvoteComment(@PathVariable(name = "postId") Long postId,
-                                @PathVariable(name = "commentId") Long commentId,
-                                Principal principal) {
-
-        this.commentService.upVoteComment(principal.getName(), commentId);
-
-        return "redirect:/posts/comments/" + postId;
-    }
-
-    @GetMapping("/upvote/{postId}")
-    @PreAuthorize("isAuthenticated()")
-    public String upVote(@PathVariable(value = "postId") Long postId,
-                         Principal principal) {
-        this.postService.upVotePost(principal.getName(), postId);
-        return "redirect:/";
-    }
-
-    @GetMapping("/downvote/{postId}")
-    @PreAuthorize("isAuthenticated()")
-    public String downVote(@PathVariable(value = "postId") Long postId,
-                           Principal principal) {
-        this.postService.downVotePost(principal.getName(), postId);
-        return "redirect:/";
-    }
-
     @GetMapping("/addPost")
     public String addPost() {
-        return "new-post";
+        return "create-post";
     }
 
     @PostMapping("/addPost")
@@ -92,18 +64,18 @@ public class PostController {
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/addComment/{postId}")
-    public String addComment(@PathVariable(name = "postId") Long postId, Model model) {
+    @GetMapping("/{postId}/addComment")
+    public String addComment(@PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", this.postService.retrievePostById(postId));
 
         return "add-comment";
     }
 
-    @PostMapping("/addComment/{postId}")
+    @PostMapping("/{postId}/addComment")
     public String addComment(@Valid AddCommentDTO addCommentDTO,
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes,
-                             @PathVariable(name = "postId") Long postId,
+                             @PathVariable("postId") Long postId,
                              Principal principal) {
         if(bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("addCommentDTO", addCommentDTO);
@@ -113,6 +85,6 @@ public class PostController {
 
         this.postService.addComment(addCommentDTO, postId, principal.getName());
 
-        return "redirect:/posts/comments/" + postId;
+        return "redirect:/posts/" + postId + "/comments";
     }
 }

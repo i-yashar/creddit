@@ -42,9 +42,6 @@ public class User {
 
     private String profilePicUrl;
 
-    @OneToOne(mappedBy = "owner")
-    private Gallery gallery;
-
     @OneToMany(mappedBy = "owner")
     private List<Post> posts;
 
@@ -145,14 +142,6 @@ public class User {
 
     public void setCredits(Integer credits) {
         this.credits = credits;
-    }
-
-    public Gallery getGallery() {
-        return gallery;
-    }
-
-    public void setGallery(Gallery gallery) {
-        this.gallery = gallery;
     }
 
     public List<Post> getPosts() {

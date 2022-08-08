@@ -22,14 +22,4 @@ public class HomeController {
         //model.addAttribute("posts", this.postService.retrieveAllPosts());
         return "index";
     }
-
-    @GetMapping("/test")
-    public String test(Model model,
-                       @PageableDefault(
-                               size = 5,
-                               page = 0
-                       ) Pageable pageable) {
-        model.addAttribute("posts", this.postService.retrieveAllPostsPaginationEnabled(pageable));
-        return "style-test";
-    }
 }

@@ -16,12 +16,12 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/profile")
-public class UserProfileController {
+@RequestMapping("/users")
+public class UserController {
     private final UserService userService;
     private final PostService postService;
 
-    public UserProfileController(UserService userService, PostService postService) {
+    public UserController(UserService userService, PostService postService) {
         this.userService = userService;
         this.postService = postService;
     }
@@ -33,20 +33,20 @@ public class UserProfileController {
         return "user-profile";
     }
 
-    @GetMapping( "/user/{username}")
+    @GetMapping( "/{username}/profile")
     public String profilePage(@PathVariable(name = "username") String username, Model model) {
         model.addAttribute("user", this.userService.getUserProfileDetails(username));
         model.addAttribute("posts", this.postService.getAllPostsByUsername(username));
         return "user-profile";
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/profile/edit")
     public String editProfile(Model model) {
         model.addAttribute("user", this.userService.getUserProfileDetails());
         return "edit-profile";
     }
 
-    @PostMapping("edit")
+    @PostMapping("/profile/edit")
     public String editProfile(@Valid UserProfileEditDTO userProfileEditDTO,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes,
@@ -54,11 +54,11 @@ public class UserProfileController {
         if(bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("user", userProfileEditDTO);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.user", bindingResult);
-            return "redirect:/profile/edit";
+            return "redirect:/users/profile/edit";
         }
 
         this.userService.editUserProfile(userProfileEditDTO, principal.getName());
 
-        return "redirect:/profile";
+        return "redirect:/users/" + principal.getName() + "/profile";
     }
 }

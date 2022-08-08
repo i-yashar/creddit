@@ -22,10 +22,10 @@
 
                         <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
                             <li class="list-inline-item">Community:
-                                <a th:href="@{/community/{communityName}(communityName = ${#strings.substring(post.community, 1)})}" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
+                                <a th:href="@{/communities/{communityName}(communityName = ${#strings.substring(post.community, 1)})}" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
                             </li>
                             <li class="list-inline-item">Posted by:
-                                <a th:href="@{/profile/user/{username}(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
+                                <a th:href="@{/users/{username}/profile(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
                             </li>
                         </ul>
 
@@ -44,12 +44,12 @@
                             </li>
                             <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
                                 th:if="${principal.username == post.owner}">
-                                <a class="btn btn-primary" th:href="@{/dashboard/delete/{postId}(postId = ${post.id})}"
+                                <a class="btn btn-primary" th:href="@{/dashboard/{postId}/delete(postId = ${post.id})}"
                                    role="button">Delete</a>
                             </li>
                             <li class="list-inline-item">
                                 <a class="btn btn-primary"
-                                   th:href="@{/posts/addComment/{postId}(postId = ${post.id})}"
+                                   th:href="@{/posts/{postId}/addComment(postId = ${post.id})}"
                                    role="button">Add comment</a>
                             </li>
                         </ul>

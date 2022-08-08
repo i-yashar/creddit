@@ -59,7 +59,7 @@
 
     <form id="addCommentForm"
           th:object="${addCommentDTO}"
-          th:action="@{/posts/addComment/{postId}(postId = ${post.id})}"
+          th:action="@{/posts/{postId}/addComment(postId = ${post.id})}"
           th:method="post"
           class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center">
         <div class="row">

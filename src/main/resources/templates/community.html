@@ -11,7 +11,6 @@
 <div class="container">
     <div class="main-body" th:object="${community}">
 
-        <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -19,7 +18,6 @@
                 <li class="breadcrumb-item active" aria-current="page">User Profile</li>
             </ol>
         </nav>
-        <!-- /Breadcrumb -->
 
         <div class="row gutters-sm">
             <div class="col-md-4 mb-3">
@@ -30,9 +28,9 @@
                             <div class="mt-3">
                                 <h4 th:text="${community.name}">Community Name</h4>
                                 <p class="text-secondary mb-1">Created by: <span th:text="${community.owner}">Owner</span> </p>
-                                <a th:if="${community.hasCurrentUserJoined == false}" id="joinCommunityBtn" th:href="@{/communities/join/{communityName}(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Join</a>
+                                <a th:if="${community.hasCurrentUserJoined == false}" id="joinCommunityBtn" th:href="@{/communities/{communityName}/join(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Join</a>
                                 <p th:if="${community.hasCurrentUserJoined == true}">You are part of this community :)</p>
-                                <a th:if="${community.hasCurrentUserJoined == true}" id="leaveCommunityBtn" th:href="@{/communities/leave/{communityName}(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Leave</a>
+                                <a th:if="${community.hasCurrentUserJoined == true}" id="leaveCommunityBtn" th:href="@{/communities/{communityName}/leave(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Leave</a>
                             </div>
                         </div>
                     </div>
@@ -56,10 +54,10 @@
 
                                 <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
                                     <li class="list-inline-item">Community:
-                                        <a href="#" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
+                                        <a th:href="@{/communities/{communityName}(communityName = ${#strings.substring(post.community, 1)})}" class="text-muted" data-abc="true" th:text="${post.community}">Community</a>
                                     </li>
                                     <li class="list-inline-item">Posted by:
-                                        <a th:href="@{/profile/user/{username}(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
+                                        <a th:href="@{/users/{username}/profile(username = ${post.owner})}" class="text-muted" data-abc="true" th:text="${post.owner}">Owner</a>
                                     </li>
                                 </ul>
 
@@ -68,12 +66,12 @@
                                 <ul class="list-inline list-inline-dotted mb-0">
                                     <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
                                         th:if="${principal.username == post.owner}">
-                                        <a class="deleteBtn btn-sm btn btn-primary" th:href="@{/posts/delete/{postId}(postId = ${post.id})}"
+                                        <a class="deleteBtn btn-sm btn btn-primary" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
                                            role="button">Delete</a>
                                     </li>
                                     <li class="list-inline-item">
                                         <a class="showCommentsBtn btn-sm btn btn-primary"
-                                           th:href="@{/posts/comments/{postId}(postId = ${post.id})}"
+                                           th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
                                            role="button">Show details</a>
                                     </li>
                                 </ul>
@@ -81,69 +79,54 @@
 
                         </div>
                     </div>
-                </div>
 
-                <div class="row gutters-sm">
-                    <div class="col-sm-6 mb-3">
-                        <div class="communityCard card h-100">
-                            <div class="card-body">
-                                <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">assignment</i>Project Status</h6>
-                                <small>Web Design</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Website Markup</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>One Page</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Mobile Template</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Backend API</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <div class="communityCard card h-100">
-                            <div class="card-body">
-                                <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">assignment</i>Project Status</h6>
-                                <small>Web Design</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Website Markup</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>One Page</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Mobile Template</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small>Backend API</small>
-                                <div class="progress mb-3" style="height: 5px">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="mt-3 container-fluid container-fluid row justify-content-center">
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${posts.isFirst()} ? 'disabled' : ''">
+                                    <a th:unless="${posts.isFirst()}"
+                                       th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)}, size=${posts.getSize()},page=0)}"
+                                       class="page-link" href="#">First</a>
+                                    <a th:if="${posts.isFirst()}"
+                                       class="page-link" href="#">First</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${posts.hasPrevious() ? '' : 'disabled'}">
+                                    <a th:if="${posts.hasPrevious()}"
+                                       th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)}, size=${posts.getSize()},page=${posts.getNumber() - 1})}"
+                                       class="page-link" href="#">Previous</a>
+                                    <a th:unless="${posts.hasPrevious()}"
+                                       class="page-link" href="#">Previous</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${posts.hasNext() ? '' : 'disabled'}">
+                                    <a th:if="${posts.hasNext()}"
+                                       th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)}, size=${posts.getSize()},page=${posts.getNumber() + 1})}"
+                                       class="page-link" href="#">Next</a>
+                                    <a th:unless="${posts.hasNext()}"
+                                       class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${posts.isLast()} ? 'disabled' : ''">
+                                    <a th:unless="${posts.isLast()}"
+                                       th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)}, size=${posts.getSize()},page=${posts.getTotalPages() - 1})}"
+                                       class="page-link" href="#">Last</a>
+                                    <a th:if="${posts.isLast()}"
+                                       class="page-link" href="#">Last</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
-
-
-
-            </div>
-        </div>
 
     </div>
 </div>

@@ -19,6 +19,9 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/communities/all">Communities</a>
+          </li>
         </ul>
 
         <form class="d-flex" role="search">
@@ -28,35 +31,32 @@
         <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
           <th:block sec:authorize="isAuthenticated()">
             <li class="nav-item">
-              <a class="nav-link" href="/posts/addPost">Add new post</a>
+              <a class="nav-link active" href="/posts/addPost">Add new post</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/communities/all">Communities</a>
+            <li>
+              <a class="nav-link active" href="/communities/create">Create new community</a>
             </li>
           </th:block>
         </ul>
         <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
           <th:block sec:authorize="isAuthenticated()">
             <li class="nav-item">
-              <a class="nav-link" href="/profile">My Profile</a>
+              <a class="nav-link active" th:href="@{/users/{username}/profile(username = ${#authentication.name})}">My Profile</a>
             </li>
             <li class="nav-item">
               <form th:action="@{/users/logout}" th:method="post">
-                <input class="btn btn-link nav-link" type="submit" value="Logout">
+                <input class="btn btn-link nav-link active" type="submit" value="Logout">
               </form>
             </li>
           </th:block>
           <th:block sec:authorize="!isAuthenticated()">
             <li class="nav-item">
-              <a class="nav-link" href="/users/register">Register</a>
+              <a class="nav-link active" href="/users/register">Register</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/users/login">Login</a>
+              <a class="nav-link active" href="/users/login">Login</a>
             </li>
           </th:block>
-<!--          <li class="nav-item justify-content-end">-->
-<!--            <a class="nav-link active">Hello user</a>-->
-<!--          </li>-->
         </ul>
       </div>
     </div>

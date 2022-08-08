@@ -41,8 +41,6 @@ public class CommunityService {
 
         communityView.setHasCurrentUserJoined(this.hasCurrentUserJoinedCommunity(communityName));
 
-        System.out.println(communityView.isHasCurrentUserJoined());
-
         return communityView;
     }
 

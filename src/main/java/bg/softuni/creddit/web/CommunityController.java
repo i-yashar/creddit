@@ -4,6 +4,8 @@ import bg.softuni.creddit.model.dto.CreateCommunityDTO;
 import bg.softuni.creddit.model.view.CommunityView;
 import bg.softuni.creddit.service.CommunityService;
 import bg.softuni.creddit.service.PostService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,10 +32,14 @@ public class CommunityController {
 
     @GetMapping("/{communityName}")
     public String communityPage(@PathVariable(name = "communityName") String communityName,
-                                Model model) {
+                                Model model,
+                                @PageableDefault(
+                                        size = 5,
+                                        page = 0
+                                ) Pageable pageable) {
 
         model.addAttribute("community", this.communityService.getCommunity(communityName));
-        model.addAttribute("posts", this.postService.retrieveAllPosts());
+        model.addAttribute("posts", this.postService.retrieveAllPostsPaginationEnabled(pageable));
         return "community";
     }
 
@@ -44,7 +50,7 @@ public class CommunityController {
         return "all-communities";
     }
 
-    @GetMapping("/join/{communityName}")
+    @GetMapping("/{communityName}/join")
     public String joinCommunity(@PathVariable(name = "communityName") String communityName,
                                 Principal principal) {
 
@@ -53,7 +59,7 @@ public class CommunityController {
         return "redirect:/communities/" + communityName;
     }
 
-    @GetMapping("/leave/{communityName}")
+    @GetMapping("/{communityName}/leave")
     public String leaveCommunity(@PathVariable(name = "communityName") String communityName,
                                  Principal principal) {
         this.communityService.removeUser(principal.getName(), communityName);

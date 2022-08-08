@@ -31,13 +31,13 @@ public class AuthenticationController {
     @GetMapping("/login")
     @PreAuthorize("isAnonymous()")
     public String login() {
-        return "auth-login";
+        return "login";
     }
 
     @GetMapping("/register")
     @PreAuthorize("isAnonymous()")
     public String register() {
-        return "auth-register";
+        return "register";
     }
 
     @PostMapping("/register")

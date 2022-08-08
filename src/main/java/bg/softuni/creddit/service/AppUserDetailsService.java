@@ -1,6 +1,5 @@
 package bg.softuni.creddit.service;
 
-import bg.softuni.creddit.model.entity.CredditUserDetails;
 import bg.softuni.creddit.model.entity.User;
 import bg.softuni.creddit.model.entity.UserRole;
 import bg.softuni.creddit.repository.UserRepository;
@@ -9,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 
 public class AppUserDetailsService implements UserDetailsService {
@@ -25,22 +23,21 @@ public class AppUserDetailsService implements UserDetailsService {
         return userRepository.
                 findByUsername(username).
                 map(this::mapToUser).
-                orElseThrow(() -> new UsernameNotFoundException("User with email " + username + " not found!"));
+                orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found!"));
     }
 
     private UserDetails mapToUser(User user) {
 
-        return new CredditUserDetails(
-                user.getPassword(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.
-                        getUserRoles().
-                        stream().
-                        map(this::map).
-                        toList()
-        );
+        return org.springframework.security.core.userdetails
+                .User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user
+                        .getUserRoles()
+                        .stream()
+                        .map(this::map)
+                        .toList())
+                .build();
     }
 
     private GrantedAuthority map(UserRole userRole) {

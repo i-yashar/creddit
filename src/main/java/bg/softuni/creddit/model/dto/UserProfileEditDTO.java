@@ -6,13 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class UserProfileEditDTO {
-    @Size(min = 2, max = 20)
-    @NotBlank
-    @UniqueUsername(message = "Username already taken")
     private String firstName;
     private String lastName;
-
-    @Size(min = 3, max = 25, message = "Username should be between 3 and 25 symbols")
     private String username;
     private String profilePicUrl;
     private String about;
