@@ -27,11 +27,9 @@ public class VoteService {
     }
 
     private Vote createNewVote(User user, Post post) {
-        Vote vote = new Vote();
-        vote.setUser(user);
-        vote.setPost(post);
-        vote.setValue(0);
+        Vote vote = new Vote(user, post, 0);
         this.voteRepository.save(vote);
+
         return this.voteRepository.findVoteByUsernameAndPostId(user.getUsername(), post.getId());
     }
 }

@@ -33,14 +33,9 @@
 
                     <ul class="list-inline list-inline-dotted mb-0">
                         <li class="list-inline-item">
-                            <a class="btn btn-primary" th:href="@{/dashboard/upvote/{postId}(postId = ${post.id})}"
-                               role="button">Upvote <span class="badge bg-secondary"
-                                                          th:text="*{upvoteCount}">0</span></a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a class="btn btn-primary"
-                               th:href="@{/dashboard/downvote/{postId}(postId = ${post.id})}"
-                               role="button">Downvote</a>
+                            <a class="showCommentsBtn btn-sm btn btn-primary"
+                               th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
+                               role="button">Show details</a>
                         </li>
                         <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
                             th:if="${principal.username == post.owner}">

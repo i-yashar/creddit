@@ -22,6 +22,12 @@ public class CommentVote {
     public CommentVote() {
     }
 
+    public CommentVote(User user, Comment comment, Integer value) {
+        this.user = user;
+        this.comment = comment;
+        this.value = value;
+    }
+
     public Long getId() {
         return id;
     }

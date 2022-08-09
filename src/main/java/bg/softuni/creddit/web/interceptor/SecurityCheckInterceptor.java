@@ -9,6 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 
 @Component
@@ -33,6 +35,7 @@ public class SecurityCheckInterceptor implements HandlerInterceptor {
             Integer number = (Integer) session.getAttribute("number");
 
             if(number == null) {
+                response.setStatus(403);
                 return false;
             }
 
@@ -41,6 +44,7 @@ public class SecurityCheckInterceptor implements HandlerInterceptor {
                     : userAnswer.equals("even");
 
             if(answerIsWrong) {
+                response.sendRedirect("/communities/create/securityCheckFail");
                 return false;
             }
 

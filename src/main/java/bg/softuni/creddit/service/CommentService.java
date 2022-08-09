@@ -1,5 +1,6 @@
 package bg.softuni.creddit.service;
 
+import bg.softuni.creddit.exception.notfound.CommentNotFoundException;
 import bg.softuni.creddit.model.dto.CommentVoteDTO;
 import bg.softuni.creddit.model.entity.*;
 import bg.softuni.creddit.model.view.CommentDisplayView;
@@ -18,6 +19,8 @@ public class CommentService {
     private final CommentVoteService commentVoteService;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final static int UP_VOTE = 1;
+    private final static int DOWN_VOTE = -1;
 
     public CommentService(CommentRepository commentRepository, CommentVoteService commentVoteService, UserService userService, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
@@ -26,12 +29,8 @@ public class CommentService {
         this.modelMapper = modelMapper;
     }
 
-    public void addComment(String content, Post post, User user) {
-        Comment comment = new Comment();
-        comment.setContent(content);
-        comment.setPost(post);
-        comment.setOwner(user);
-        comment.setUpvoteCount(0);
+    public void addComment(String content, Post post, User owner) {
+        Comment comment = new Comment(content, 0, post, owner);
         this.commentRepository.save(comment);
     }
 
@@ -46,70 +45,54 @@ public class CommentService {
     public CommentVoteDTO upVoteComment(String username, Long commentId) {
         Comment comment = this.getCommentById(commentId);
 
-        User owner = comment.getOwner();
-
-        owner.setCredits(owner.getCredits() + comment.getUpvoteCount() / 5);
-
         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
                 this.userService.getUserByUsername(username),
                 comment
         );
 
-        if (commentVote.getValue() == 1) {
-            commentVote.setValue(0);
-            comment.setUpvoteCount(comment.getUpvoteCount() - 1);
-        } else if (commentVote.getValue() == -1) {
-            commentVote.setValue(1);
-            comment.setUpvoteCount(comment.getUpvoteCount() + 2);
-        } else if (commentVote.getValue() == 0) {
-            commentVote.setValue(1);
-            comment.setUpvoteCount(comment.getUpvoteCount() + 1);
-        }
-
-        this.commentVoteService.updateCommentVote(commentVote);
-        this.commentRepository.save(comment);
-
-        CommentVoteDTO commentVoteDTO = new CommentVoteDTO();
-        commentVoteDTO.setUpVoteCount(this.commentRepository.findById(commentId).get().getUpvoteCount());
-
-        return commentVoteDTO;
+        return this.giveCommentVote(comment, commentVote, UP_VOTE);
     }
     @Transactional
     public CommentVoteDTO downVoteComment(String username, Long commentId) {
         Comment comment = this.getCommentById(commentId);
 
-        User owner = comment.getOwner();
-
-        owner.setCredits(owner.getCredits() + comment.getUpvoteCount() / 5);
-
         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
                 this.userService.getUserByUsername(username),
                 comment
         );
 
-        if (commentVote.getValue() == -1) {
-            commentVote.setValue(0);
-            comment.setUpvoteCount(comment.getUpvoteCount() + 1);
-        } else if (commentVote.getValue() == 1) {
-            commentVote.setValue(-1);
-            comment.setUpvoteCount(comment.getUpvoteCount() - 2);
-        } else if (commentVote.getValue() == 0) {
-            commentVote.setValue(-1);
-            comment.setUpvoteCount(comment.getUpvoteCount() - 1);
+        return this.giveCommentVote(comment, commentVote, DOWN_VOTE);
+    }
+
+    protected Comment getCommentById(Long commentId) {
+        return this.commentRepository
+                .findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId +
+                        " not found. Please try searching for different comment."));
+    }
+
+    private CommentVoteDTO giveCommentVote(Comment comment, CommentVote commentVote, int vote) {
+        switch (commentVote.getValue()) {
+            case 1 -> {
+                commentVote.setValue(vote == UP_VOTE ? 0 : -1);
+                comment.setUpvoteCount(comment.getUpvoteCount() - (vote == UP_VOTE ? 1 : 2));
+            }
+            case -1 -> {
+                commentVote.setValue(vote == UP_VOTE ? 1 : 0);
+                comment.setUpvoteCount(comment.getUpvoteCount() + (vote == UP_VOTE ? 2 : 1));
+            }
+            case 0 -> {
+                commentVote.setValue(vote == UP_VOTE ? 1 : -1);
+                comment.setUpvoteCount(comment.getUpvoteCount() + (vote == UP_VOTE ? 1 : -1));
+            }
         }
 
         this.commentVoteService.updateCommentVote(commentVote);
         this.commentRepository.save(comment);
 
         CommentVoteDTO commentVoteDTO = new CommentVoteDTO();
-        commentVoteDTO.setUpVoteCount(this.commentRepository.findById(commentId).get().getUpvoteCount());
+        commentVoteDTO.setUpVoteCount(comment.getUpvoteCount());
 
         return commentVoteDTO;
-    }
-
-    protected Comment getCommentById(Long commentId) {
-        return this.commentRepository
-                .findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
     }
 }

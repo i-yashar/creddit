@@ -29,11 +29,9 @@ public class CommentVoteService {
     }
 
     private CommentVote createNewCommentVote(User user, Comment comment) {
-        CommentVote commentVote = new CommentVote();
-        commentVote.setUser(user);
-        commentVote.setComment(comment);
-        commentVote.setValue(0);
+        CommentVote commentVote = new CommentVote(user, comment, 0);
         this.commentVoteRepository.save(commentVote);
+
         return this.commentVoteRepository.findCommentVoteByUsernameAndCommentId(user.getUsername(),
                 comment.getId());
     }

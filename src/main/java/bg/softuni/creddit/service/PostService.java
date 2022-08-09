@@ -1,5 +1,6 @@
 package bg.softuni.creddit.service;
 
+import bg.softuni.creddit.exception.notfound.PostNotFoundException;
 import bg.softuni.creddit.model.dto.AddCommentDTO;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.model.dto.PostVoteDTO;
@@ -27,6 +28,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommunityService communityService;
     private final ModelMapper modelMapper;
+    private final static int UP_VOTE = 1;
+    private final static int DOWN_VOTE = -1;
 
     public PostService(CommentService commentService, UserService userService, VoteService voteService, CommentVoteService commentVoteService, PostRepository postRepository, CommunityService communityService, ModelMapper modelMapper) {
         this.commentService = commentService;
@@ -56,26 +59,6 @@ public class PostService {
                 });
     }
 
-    public List<PostDisplayView> retrieveAllPosts() {
-        List<Post> allPosts = this.postRepository.findAll();
-
-        return allPosts
-                .stream()
-                .map(p -> modelMapper.map(p, PostDisplayView.class))
-                .map(p -> {
-                    User user = this.userService.getCurrentUser();
-                    if(user != null) {
-                        Vote vote = this.voteService.findVoteByUserAndPost(
-                                user,
-                                this.getPostById(p.getId())
-                        );
-                        p.setUpvoteStatus(vote.getValue());
-                    }
-                    return p;
-                })
-                .collect(Collectors.toList());
-    }
-
     public PostDisplayView retrievePostById(Long postId) {
         Post post = this.getPostById(postId);
 
@@ -95,9 +78,8 @@ public class PostService {
     }
 
     public List<CommentDisplayView> loadPostComments(Long postId) {
-        return this.commentService.findAllCommentsOnPost(postId)
-                .stream()
-                .map(c -> {
+        return this.commentService.findAllCommentsOnPost(postId).stream()
+                .peek(c -> {
                     User user = this.userService.getCurrentUser();
                     if(user != null) {
                         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
@@ -106,20 +88,17 @@ public class PostService {
                         );
                         c.setUpvoteStatus(commentVote.getValue());
                     }
-                    return c;
                 })
                 .collect(Collectors.toList());
     }
 
     public void addPost(AddPostDTO addPostDTO, String username) {
-        Post post = modelMapper.map(addPostDTO, Post.class);
-        post.setUpvoteCount(0);
-        post.setComments(new ArrayList<>());
-        post.setCreatedOn(LocalDateTime.now());
-        post.setOwner(this.userService.getUserByUsername(username));
-
         Community community = this.communityService.getCommunityByName(addPostDTO.getCommunity());
 
+        Post post = modelMapper.map(addPostDTO, Post.class);
+        post.setUpvoteCount(0);
+        post.setCreatedOn(LocalDateTime.now());
+        post.setOwner(this.userService.getUserByUsername(username));
         post.setCommunity(community);
 
         this.postRepository.save(post);
@@ -131,24 +110,7 @@ public class PostService {
         Vote vote = this.voteService.findVoteByUserAndPost(this.userService.getUserByUsername(username), getPostById(postId));
         Post post = this.getPostById(postId);
 
-        if (vote.getValue() == 1) {
-            vote.setValue(0);
-            post.setUpvoteCount(post.getUpvoteCount() - 1);
-        } else if (vote.getValue() == -1) {
-            vote.setValue(1);
-            post.setUpvoteCount(post.getUpvoteCount() + 2);
-        } else if (vote.getValue() == 0) {
-            vote.setValue(1);
-            post.setUpvoteCount(post.getUpvoteCount() + 1);
-        }
-
-        this.voteService.updateVote(vote);
-        this.postRepository.save(post);
-
-        PostVoteDTO postVoteDTO = new PostVoteDTO();
-        postVoteDTO.setUpVoteCount(this.postRepository.findById(postId).get().getUpvoteCount());
-
-        return postVoteDTO;
+        return this.givePostVote(post, vote, UP_VOTE);
     }
     @Transactional
     public PostVoteDTO downVotePost(String username, Long postId) {
@@ -156,24 +118,7 @@ public class PostService {
         Vote vote = this.voteService.findVoteByUserAndPost(this.userService.getUserByUsername(username), getPostById(postId));
         Post post = this.getPostById(postId);
 
-        if (vote.getValue() == -1) {
-            vote.setValue(0);
-            post.setUpvoteCount(post.getUpvoteCount() + 1);
-        } else if (vote.getValue() == 1) {
-            vote.setValue(-1);
-            post.setUpvoteCount(post.getUpvoteCount() - 2);
-        } else if (vote.getValue() == 0) {
-            vote.setValue(-1);
-            post.setUpvoteCount(post.getUpvoteCount() - 1);
-        }
-
-        this.voteService.updateVote(vote);
-        this.postRepository.save(post);
-
-        PostVoteDTO postVoteDTO = new PostVoteDTO();
-        postVoteDTO.setUpVoteCount(this.postRepository.findById(postId).get().getUpvoteCount());
-
-        return postVoteDTO;
+        return this.givePostVote(post, vote, DOWN_VOTE);
     }
 
     public void addComment(AddCommentDTO addCommentDTO, Long postId, String username) {
@@ -187,7 +132,8 @@ public class PostService {
     protected Post getPostById(Long postId) {
         return this.postRepository
                 .findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+                .orElseThrow(() -> new PostNotFoundException("Post with id " + postId +
+                        " not found. Please try searching for different post."));
     }
 
     public List<PostDisplayView> getAllPostsByUsername(String username) {
@@ -196,5 +142,30 @@ public class PostService {
                 .stream()
                 .map(p -> modelMapper.map(p,PostDisplayView.class))
                 .collect(Collectors.toList());
+    }
+
+    private PostVoteDTO givePostVote(Post post, Vote vote, int voteValue) {
+        switch (vote.getValue()) {
+            case 1 -> {
+                vote.setValue(voteValue == UP_VOTE ? 0 : -1);
+                post.setUpvoteCount(post.getUpvoteCount() - (voteValue == UP_VOTE ? 1 : 2));
+            }
+            case -1 -> {
+                vote.setValue(voteValue == UP_VOTE ? 1 : 0);
+                post.setUpvoteCount(post.getUpvoteCount() + (voteValue == UP_VOTE ? 2 : 1));
+            }
+            case 0 -> {
+                vote.setValue(voteValue == UP_VOTE ? 1 : -1);
+                post.setUpvoteCount(post.getUpvoteCount() + (voteValue == UP_VOTE ? 1 : -1));
+            }
+        }
+
+        this.voteService.updateVote(vote);
+        this.postRepository.save(post);
+
+        PostVoteDTO postVoteDTO = new PostVoteDTO();
+        postVoteDTO.setUpVoteCount(post.getUpvoteCount());
+
+        return postVoteDTO;
     }
 }

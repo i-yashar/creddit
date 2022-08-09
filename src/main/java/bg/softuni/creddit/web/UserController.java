@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping(path = {"", "/"})
     public String profilePage(Model model, Principal principal) {
-        model.addAttribute("user", this.userService.getUserProfileDetails());
+        model.addAttribute("user", this.userService.getUserProfileDetails(principal.getName()));
         model.addAttribute("posts", this.postService.getAllPostsByUsername(principal.getName()));
         return "user-profile";
     }
@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/edit")
-    public String editProfile(Model model) {
-        model.addAttribute("user", this.userService.getUserProfileDetails());
+    public String editProfile(Model model, Principal principal) {
+        model.addAttribute("user", this.userService.getUserProfileDetails(principal.getName()));
         return "edit-profile";
     }
 

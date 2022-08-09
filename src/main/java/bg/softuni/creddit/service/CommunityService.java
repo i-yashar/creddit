@@ -1,5 +1,7 @@
 package bg.softuni.creddit.service;
 
+import bg.softuni.creddit.exception.notfound.CommunityNotFoundException;
+import bg.softuni.creddit.exception.illegalaction.IllegalActionException;
 import bg.softuni.creddit.model.dto.CreateCommunityDTO;
 import bg.softuni.creddit.model.entity.Community;
 import bg.softuni.creddit.model.entity.User;
@@ -35,9 +37,10 @@ public class CommunityService {
     }
 
     public CommunityView getCommunity(String communityName) {
-        Community community = this.getCommunityByName(communityName);
-
-        CommunityView communityView = modelMapper.map(community, CommunityView.class);
+        CommunityView communityView = modelMapper.map(
+                this.getCommunityByName(communityName),
+                CommunityView.class
+        );
 
         communityView.setHasCurrentUserJoined(this.hasCurrentUserJoinedCommunity(communityName));
 
@@ -64,7 +67,8 @@ public class CommunityService {
         }
 
         if(allCommunityMembers.contains(user)) {
-            throw new IllegalArgumentException("User already part of community");
+            throw new IllegalActionException("User with username " + user.getUsername() + " is already part of community "
+                    + "'" + community.getName() + "'.");
         }
 
         allCommunityMembers.add(user);
@@ -84,7 +88,8 @@ public class CommunityService {
         }
 
         if(!allCommunityMembers.contains(user)) {
-            throw new IllegalArgumentException("User not part of community");
+            throw new IllegalActionException("User with username " + user.getUsername() + " is not part of community "
+                    + "'" + community.getName() + "'.");
         }
 
         allCommunityMembers.remove(user);
@@ -96,18 +101,18 @@ public class CommunityService {
         User user = this.userService.getUserByUsername(creator);
 
         Community community = this.modelMapper.map(createCommunityDTO, Community.class);
-        community.setMembers(new HashSet<>());
         community.setCreatedBy(user);
         community.setCreatedOn(LocalDate.now());
 
-        user.setCreatedCommunitiesCount(user.getCreatedCommunitiesCount() + 1);
-
         this.communityRepository.save(community);
+
+        this.addUser(creator, community.getName());
     }
 
     protected Community getCommunityByName(String name) {
         return this.communityRepository
                 .findByName(name.startsWith("_") ? name : ("_" + name))
-                .orElseThrow(() -> new IllegalArgumentException("Community not found"));
+                .orElseThrow(() -> new CommunityNotFoundException("Community with name " + name + " not found." +
+                        " Please try searching for different community."));
     }
 }

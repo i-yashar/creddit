@@ -1,5 +1,6 @@
 package bg.softuni.creddit.service;
 
+import bg.softuni.creddit.exception.notfound.UserNotFoundException;
 import bg.softuni.creddit.model.dto.UserProfileEditDTO;
 import bg.softuni.creddit.model.entity.User;
 import bg.softuni.creddit.model.dto.UserRegisterDTO;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -48,14 +48,8 @@ public class UserService {
         login(user);
     }
 
-    public UserProfileView getUserProfileDetails() {
-        return modelMapper.map(this.getCurrentUser(), UserProfileView.class);
-    }
-
     public UserProfileView getUserProfileDetails(String username) {
-        User user = this.getUserByUsername(username);
-
-        return modelMapper.map(user, UserProfileView.class);
+        return modelMapper.map(this.getUserByUsername(username), UserProfileView.class);
     }
 
 
@@ -96,18 +90,12 @@ public class UserService {
         }
         String username = ((UserDetails) principal).getUsername();
 
-        Optional<User> byUsername = this.userRepository.findByUsername(username);
-
-        if (byUsername.isEmpty()) {
-            throw new IllegalStateException("User not found");
-        }
-
-        return byUsername.get();
+        return this.getUserByUsername(username);
     }
 
     protected User getUserByUsername(String username) {
         return this.userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found."));
     }
 }

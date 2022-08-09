@@ -21,6 +21,12 @@ public class Vote {
     public Vote() {
     }
 
+    public Vote(User user, Post post, Integer value) {
+        this.user = user;
+        this.post = post;
+        this.value = value;
+    }
+
     public User getUser() {
         return user;
     }

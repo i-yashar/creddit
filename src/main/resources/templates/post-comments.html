@@ -70,7 +70,7 @@
 
                     <ul class="post-details list-inline list-inline-dotted mb-3 mb-lg-2">
                         <li class="list-inline-item">Posted by:
-                            <a th:href="@{/profile/user/{username}(username = ${comment.owner})}" class="text-muted" data-abc="true" th:text="${comment.owner}">Owner</a>
+                            <a th:href="@{/users/{username}/profile(username = ${comment.owner})}" class="text-muted" data-abc="true" th:text="${comment.owner}">Owner</a>
                         </li>
                     </ul>
 

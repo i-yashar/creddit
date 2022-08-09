@@ -25,6 +25,13 @@ public class Comment {
     public Comment() {
     }
 
+    public Comment(String content, Integer upvoteCount, Post post, User owner) {
+        this.content = content;
+        this.upvoteCount = upvoteCount;
+        this.post = post;
+        this.owner = owner;
+    }
+
     public User getOwner() {
         return owner;
     }

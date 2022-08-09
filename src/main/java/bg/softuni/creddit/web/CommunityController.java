@@ -32,7 +32,7 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityName}")
-    public String communityPage(@PathVariable(name = "communityName") String communityName,
+    public String communityPage(@PathVariable("communityName") String communityName,
                                 Model model,
                                 @PageableDefault(
                                         size = 5,
@@ -52,7 +52,7 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityName}/join")
-    public String joinCommunity(@PathVariable(name = "communityName") String communityName,
+    public String joinCommunity(@PathVariable("communityName") String communityName,
                                 Principal principal) {
 
         this.communityService.addUser(principal.getName(), communityName);
@@ -61,7 +61,7 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityName}/leave")
-    public String leaveCommunity(@PathVariable(name = "communityName") String communityName,
+    public String leaveCommunity(@PathVariable("communityName") String communityName,
                                  Principal principal) {
         this.communityService.removeUser(principal.getName(), communityName);
 
@@ -88,5 +88,10 @@ public class CommunityController {
 
         this.communityService.createCommunity(createCommunityDTO, principal.getName());
         return "redirect:/communities/" + createCommunityDTO.getName().substring(1);
+    }
+
+    @GetMapping("/create/securityCheckFail")
+    public String securityCheckFail() {
+        return "security-check-fail";
     }
 }

@@ -27,7 +27,7 @@
                             <img th:src="@{${community.communityPhotoUrl}}" alt="Admin" class="rounded" width="150">
                             <div class="mt-3">
                                 <h4 th:text="${community.name}">Community Name</h4>
-                                <p class="text-secondary mb-1">Created by: <span th:text="${community.owner}">Owner</span> </p>
+                                <p class="text-secondary mb-1">Created by: <a th:href="@{/users/{username}/profile(username = ${community.owner})}" class="text-muted" data-abc="true" th:text="${community.owner}">Owner</a></p>
                                 <a th:if="${community.hasCurrentUserJoined == false}" id="joinCommunityBtn" th:href="@{/communities/{communityName}/join(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Join</a>
                                 <p th:if="${community.hasCurrentUserJoined == true}">You are part of this community :)</p>
                                 <a th:if="${community.hasCurrentUserJoined == true}" id="leaveCommunityBtn" th:href="@{/communities/{communityName}/leave(communityName = ${#strings.substring(community.name, 1)})}" class="btn btn-primary">Leave</a>
