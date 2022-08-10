@@ -4,15 +4,21 @@ import bg.softuni.creddit.model.dto.AddCommentDTO;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.service.CommentService;
 import bg.softuni.creddit.service.PostService;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
@@ -38,6 +44,9 @@ public class PostController {
     public String showComments(@PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", this.postService.retrievePostById(postId));
         model.addAttribute("comments", this.postService.loadPostComments(postId));
+        model.addAttribute("roles", SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
 
         return "post-comments";
     }
@@ -86,5 +95,13 @@ public class PostController {
         this.postService.addComment(addCommentDTO, postId, principal.getName());
 
         return "redirect:/posts/" + postId + "/comments";
+    }
+
+    @GetMapping("/{postId}/delete")
+    @PreAuthorize("@postService.isOwner(#principal.name, #postId) or @postService.isAdmin(#principal.name)")
+    public String deletePost(@PathVariable("postId") Long postId, Principal principal, HttpServletRequest request) {
+        this.postService.deletePost(postId);
+
+        return "redirect:/dashboard";
     }
 }

@@ -37,11 +37,6 @@
                                th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
                                role="button">Show details</a>
                         </li>
-                        <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
-                            th:if="${principal.username == post.owner}">
-                            <a class="btn btn-primary" th:href="@{/dashboard/delete/{postId}(postId = ${post.id})}"
-                               role="button">Delete</a>
-                        </li>
                     </ul>
                 </div>
 

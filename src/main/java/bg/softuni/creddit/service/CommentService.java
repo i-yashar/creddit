@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,5 +95,14 @@ public class CommentService {
         commentVoteDTO.setUpVoteCount(comment.getUpvoteCount());
 
         return commentVoteDTO;
+    }
+
+    public void deleteAllCommentsOnPost(Long postId) {
+        this.commentRepository.findAll().stream()
+                .filter(c -> Objects.equals(c.getPost().getId(), postId))
+                .forEach(comment -> {
+                    this.commentVoteService.deleteAllCommentVotesOnComment(comment.getId());
+                    this.commentRepository.delete(comment);
+                });
     }
 }

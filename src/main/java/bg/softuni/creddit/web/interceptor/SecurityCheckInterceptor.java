@@ -61,7 +61,7 @@ public class SecurityCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if(request.getMethod().equals("GET") && modelAndView != null) {
+        if(request.getMethod().equals("GET") && request.getRequestURI().contains("create") && modelAndView != null) {
             modelAndView.addObject("number", request.getSession().getAttribute("number"));
         }
     }

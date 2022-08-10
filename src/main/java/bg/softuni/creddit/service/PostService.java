@@ -5,6 +5,7 @@ import bg.softuni.creddit.model.dto.AddCommentDTO;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.model.dto.PostVoteDTO;
 import bg.softuni.creddit.model.entity.*;
+import bg.softuni.creddit.model.entity.enums.UserRoleEnum;
 import bg.softuni.creddit.model.view.CommentDisplayView;
 import bg.softuni.creddit.model.view.PostDisplayView;
 import bg.softuni.creddit.repository.PostRepository;
@@ -127,6 +128,21 @@ public class PostService {
         User user = this.userService.getUserByUsername(username);
 
         this.commentService.addComment(addCommentDTO.getComment(), post, user);
+    }
+
+    public void deletePost(Long postId) {
+        this.voteService.deleteAllVotesOnPost(postId);
+        this.commentService.deleteAllCommentsOnPost(postId);
+        this.postRepository.deleteById(postId);
+    }
+
+    public boolean isOwner(String username, Long postId) {
+        return this.getPostById(postId).getOwner().getUsername().equals(username);
+    }
+
+    public boolean isAdmin(String username) {
+        return this.userService.getUserByUsername(username).getUserRoles().stream()
+                .anyMatch(r -> r.getUserRole() == UserRoleEnum.ADMIN);
     }
 
     protected Post getPostById(Long postId) {

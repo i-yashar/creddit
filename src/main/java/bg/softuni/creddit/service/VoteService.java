@@ -6,6 +6,8 @@ import bg.softuni.creddit.model.entity.Vote;
 import bg.softuni.creddit.repository.VoteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class VoteService {
     private final VoteRepository voteRepository;
@@ -31,5 +33,11 @@ public class VoteService {
         this.voteRepository.save(vote);
 
         return this.voteRepository.findVoteByUsernameAndPostId(user.getUsername(), post.getId());
+    }
+
+    public void deleteAllVotesOnPost(Long postId) {
+        this.voteRepository.findAll().stream()
+                .filter(v -> Objects.equals(v.getPost().getId(), postId))
+                .forEach(this.voteRepository::delete);
     }
 }

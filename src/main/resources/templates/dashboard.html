@@ -45,11 +45,6 @@
                                    href="javascript:void(0)"
                                    role="button">Downvote</a>
                             </li>
-                            <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
-                                th:if="${principal.username == post.owner}">
-                                <a class="deleteBtn btn btn-primary" th:href="@{/posts/delete/{postId}(postId = ${post.id})}"
-                                   role="button">Delete</a>
-                            </li>
                             <li class="list-inline-item">
                                 <a class="showCommentsBtn btn btn-primary"
                                    th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
@@ -59,6 +54,11 @@
                                 <a class="addCommentBtn btn btn-primary"
                                    th:href="@{/posts/{postId}/addComment(postId = ${post.id})}"
                                    role="button">Add comment</a>
+                            </li>
+                            <li class="list-inline-item"
+                                th:if="${#authentication.name == post.owner} or ${roles.contains('ROLE_ADMIN')}">
+                                <a class="deleteBtn btn btn-primary" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
+                                   role="button">Delete</a>
                             </li>
                         </ul>
                     </div>

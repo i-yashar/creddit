@@ -62,8 +62,9 @@ public class CommunityService {
 
         Set<User> allCommunityMembers = community.getMembers();
 
-        if(allCommunityMembers == null) {
-            allCommunityMembers = new HashSet<>();
+        if(community.getMembers() == null) {
+            community.setMembers(new HashSet<>());
+            allCommunityMembers = community.getMembers();
         }
 
         if(allCommunityMembers.contains(user)) {

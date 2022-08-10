@@ -6,6 +6,8 @@ import bg.softuni.creddit.model.entity.User;
 import bg.softuni.creddit.repository.CommentVoteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class CommentVoteService {
     private final CommentVoteRepository commentVoteRepository;
@@ -30,9 +32,13 @@ public class CommentVoteService {
 
     private CommentVote createNewCommentVote(User user, Comment comment) {
         CommentVote commentVote = new CommentVote(user, comment, 0);
-        this.commentVoteRepository.save(commentVote);
 
-        return this.commentVoteRepository.findCommentVoteByUsernameAndCommentId(user.getUsername(),
-                comment.getId());
+        return this.commentVoteRepository.save(commentVote);
+    }
+
+    public void deleteAllCommentVotesOnComment(Long commentId) {
+        this.commentVoteRepository.findAll().stream()
+                .filter(cv -> Objects.equals(cv.getComment().getId(), commentId))
+                .forEach(this.commentVoteRepository::delete);
     }
 }

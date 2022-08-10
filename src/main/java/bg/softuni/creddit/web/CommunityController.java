@@ -7,6 +7,7 @@ import bg.softuni.creddit.service.CommunityService;
 import bg.softuni.creddit.service.PostService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +53,7 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityName}/join")
+    @PreAuthorize("isAuthenticated()")
     public String joinCommunity(@PathVariable("communityName") String communityName,
                                 Principal principal) {
 

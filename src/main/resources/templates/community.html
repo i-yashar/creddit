@@ -64,11 +64,6 @@
                                 <p class="mb-3 post-description" th:text="${post.description}">Description</p>
 
                                 <ul class="list-inline list-inline-dotted mb-0">
-                                    <li class="list-inline-item" sec:authorize="hasRole('ROLE_MODERATOR')"
-                                        th:if="${principal.username == post.owner}">
-                                        <a class="deleteBtn btn-sm btn btn-primary" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
-                                           role="button">Delete</a>
-                                    </li>
                                     <li class="list-inline-item">
                                         <a class="showCommentsBtn btn-sm btn btn-primary"
                                            th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
