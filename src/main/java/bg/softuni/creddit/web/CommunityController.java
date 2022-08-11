@@ -41,7 +41,7 @@ public class CommunityController {
                                 ) Pageable pageable) {
 
         model.addAttribute("community", this.communityService.getCommunity(communityName));
-        model.addAttribute("posts", this.postService.retrieveAllPostsPaginationEnabled(pageable));
+        model.addAttribute("posts", this.postService.retrieveAllCommunityPostsPaginationEnabled(communityName, pageable));
         return "community";
     }
 

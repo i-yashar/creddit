@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head::head"></head>
+<body>
+<div th:replace="fragments/navbar :: navbar">
+    Navbar
+</div>
+<div class="container-fluid">
+    <h5 class="text-center text-dark mt-5">
+        Unfortunately, you're not permitted to perform that action.
+        <p>Reason: <span th:text="${message}"></span></p>
+    </h5>
+</div>
+
+</body>
+</html>

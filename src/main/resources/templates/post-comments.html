@@ -34,7 +34,7 @@
                         <ul class="list-inline list-inline-dotted mb-0">
                             <li class="list-inline-item">
                                 <a class="upVoteBtn btn" th:classappend="${post.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'" href="javascript:void(0)"
-                                   role="button">Upvote <span class="badge bg-secondary"
+                                   role="button">Upvote <span class="badge badge-light"
                                                               th:text="${post.upvoteCount}">0</span></a>
                             </li>
                             <li class="list-inline-item">
@@ -48,8 +48,8 @@
                                    role="button">Add comment</a>
                             </li>
                             <li class="list-inline-item"
-                                th:if="${#authentication.name == post.owner} or ${roles.contains('ROLE_ADMIN')}">
-                                <a class="btn btn-primary" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
+                                th:if="${#authentication.name == post.owner} or ${roles.contains('ROLE_ADMIN')} or ${roles.contains('ROLE_MODERATOR')}">
+                                <a class="btn btn-danger" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
                                    role="button">Delete</a>
                             </li>
                         </ul>
@@ -80,7 +80,7 @@
                         <li class="list-inline-item">
                             <a class="upVoteCommentBtn btn btn-sm" th:classappend="${comment.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'"
                                href="javascript:void(0)"
-                               role="button">Upvote <span class="badge bg-secondary"
+                               role="button">Upvote <span class="badge badge-light"
                                                           th:text="${comment.upvoteCount}">0</span></a>
                         </li>
                         <li class="list-inline-item">
@@ -88,8 +88,10 @@
                                href="javascript:void(0)"
                                role="button">Downvote</a>
                         </li>
-                        <li class="list-inline-item btn-sm" sec:authorize="hasRole('ROLE_MODERATOR')">
-                            <a class="btn btn-primary" href=""
+                        <li class="list-inline-item"
+                            th:if="${#authentication.name == comment.owner} or ${roles.contains('ROLE_ADMIN')} or ${roles.contains('ROLE_MODERATOR')}">
+                            <a class="btn btn-danger btn-sm"
+                               th:href="@{/posts/{postId}/comments/{commentId}/delete(postId = ${post.id}, commentId = ${comment.id})}"
                                role="button">Delete</a>
                         </li>
                     </ul>

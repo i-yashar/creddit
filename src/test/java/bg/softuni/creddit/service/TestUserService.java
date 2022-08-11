@@ -3,6 +3,7 @@ package bg.softuni.creddit.service;
 import bg.softuni.creddit.model.dto.UserProfileEditDTO;
 import bg.softuni.creddit.model.entity.User;
 import bg.softuni.creddit.repository.UserRepository;
+import bg.softuni.creddit.repository.UserRoleRepository;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ public class TestUserService {
     @Mock
     private UserRepository mockUserRepository;
     @Mock
+    private UserRoleRepository mockuserRoleRepository;
+    @Mock
     private PasswordEncoder mockPasswordEncoder;
     @Mock
     private UserDetailsService mockUserDetailsService;
@@ -37,7 +40,7 @@ public class TestUserService {
 
     @BeforeEach
     void setUp() {
-        toTest = new UserService(mockUserRepository, mockPasswordEncoder, mockUserDetailsService, mockModelMapper);
+        toTest = new UserService(mockUserRepository, mockuserRoleRepository, mockPasswordEncoder, mockUserDetailsService, mockModelMapper);
 
         testUser = new User();
         testUser.setId((long) 1);

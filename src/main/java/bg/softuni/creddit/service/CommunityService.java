@@ -113,7 +113,6 @@ public class CommunityService {
     protected Community getCommunityByName(String name) {
         return this.communityRepository
                 .findByName(name.startsWith("_") ? name : ("_" + name))
-                .orElseThrow(() -> new CommunityNotFoundException("Community with name " + name + " not found." +
-                        " Please try searching for different community."));
+                .orElseThrow(() -> new CommunityNotFoundException("Community with name " + name + " not found."));
     }
 }

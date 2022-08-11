@@ -42,6 +42,14 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    public int findCommentCountOnPost(Long postId) {
+        return this.findAllCommentsOnPost(postId).size();
+    }
+
+    public boolean isOwner(String username, Long commentId) {
+        return this.getCommentById(commentId).getOwner().getUsername().equals(username);
+    }
+
     @Transactional
     public CommentVoteDTO upVoteComment(String username, Long commentId) {
         Comment comment = this.getCommentById(commentId);
@@ -53,6 +61,7 @@ public class CommentService {
 
         return this.giveCommentVote(comment, commentVote, UP_VOTE);
     }
+
     @Transactional
     public CommentVoteDTO downVoteComment(String username, Long commentId) {
         Comment comment = this.getCommentById(commentId);
@@ -65,11 +74,31 @@ public class CommentService {
         return this.giveCommentVote(comment, commentVote, DOWN_VOTE);
     }
 
+    @Transactional
+    public void distributeCredits(String username, Long commentId) {
+        User user = this.getCommentById(commentId).getOwner();
+        String commentOwner = user.getUsername();
+
+        if(commentOwner.equals(username)) {
+            return;
+        }
+
+        user.setCredits(0);
+
+        int creditSum = this.commentRepository.findAll().stream()
+                .filter(c -> c.getOwner().getUsername().equals(commentOwner))
+                .map(Comment::getUpvoteCount)
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        user.setCredits(Math.max(0, creditSum));
+    }
+
     protected Comment getCommentById(Long commentId) {
         return this.commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment with id " + commentId +
-                        " not found. Please try searching for different comment."));
+                        " not found."));
     }
 
     private CommentVoteDTO giveCommentVote(Comment comment, CommentVote commentVote, int vote) {
@@ -104,5 +133,12 @@ public class CommentService {
                     this.commentVoteService.deleteAllCommentVotesOnComment(comment.getId());
                     this.commentRepository.delete(comment);
                 });
+    }
+
+    public void deleteComment(Long commentId) {
+        this.commentVoteService.deleteAllCommentVotesOnComment(commentId);
+
+        Comment comment = this.getCommentById(commentId);
+        this.commentRepository.delete(comment);
     }
 }

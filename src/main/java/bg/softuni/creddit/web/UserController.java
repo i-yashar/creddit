@@ -61,4 +61,18 @@ public class UserController {
 
         return "redirect:/users/" + principal.getName() + "/profile";
     }
+
+    @GetMapping("/{username}/makeModerator")
+    public String makeModerator(@PathVariable("username") String username) {
+        this.userService.promoteToModerator(username);
+
+        return "redirect:/admins";
+    }
+
+    @GetMapping("/{username}/revokeModerator")
+    public String revokeModerator(@PathVariable("username") String username) {
+        this.userService.demoteToUser(username);
+
+        return "redirect:/admins";
+    }
 }

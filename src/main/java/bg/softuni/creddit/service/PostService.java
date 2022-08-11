@@ -12,6 +12,7 @@ import bg.softuni.creddit.repository.PostRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,21 +44,15 @@ public class PostService {
     }
 
     public Page<PostDisplayView> retrieveAllPostsPaginationEnabled(Pageable pageable) {
-        Page<Post> allPosts = this.postRepository.findAll(pageable);
+        Page<Post> allPosts = this.postRepository.findByOrderByCreatedOnDesc(pageable);
 
-        return allPosts
-                .map(p -> modelMapper.map(p, PostDisplayView.class))
-                .map(p -> {
-                    User user = this.userService.getCurrentUser();
-                    if(user != null) {
-                        Vote vote = this.voteService.findVoteByUserAndPost(
-                                user,
-                                this.getPostById(p.getId())
-                        );
-                        p.setUpvoteStatus(vote.getValue());
-                    }
-                    return p;
-                });
+        return this.mapPosts(allPosts);
+    }
+
+    public Page<PostDisplayView> retrieveAllCommunityPostsPaginationEnabled(String communityName, Pageable pageable) {
+        Page<Post> allPosts = this.postRepository.findAllByCommunityNameOrderByCreatedOnDesc("_" + communityName, pageable);
+
+        return this.mapPosts(allPosts);
     }
 
     public PostDisplayView retrievePostById(Long postId) {
@@ -67,7 +62,7 @@ public class PostService {
 
         User user = this.userService.getCurrentUser();
 
-        if(user != null) {
+        if (user != null) {
             Vote vote = this.voteService.findVoteByUserAndPost(
                     user,
                     this.getPostById(postDisplayView.getId())
@@ -82,7 +77,7 @@ public class PostService {
         return this.commentService.findAllCommentsOnPost(postId).stream()
                 .peek(c -> {
                     User user = this.userService.getCurrentUser();
-                    if(user != null) {
+                    if (user != null) {
                         CommentVote commentVote = this.commentVoteService.findCommentVoteByUserAndComment(
                                 user,
                                 this.commentService.getCommentById(c.getId())
@@ -113,6 +108,7 @@ public class PostService {
 
         return this.givePostVote(post, vote, UP_VOTE);
     }
+
     @Transactional
     public PostVoteDTO downVotePost(String username, Long postId) {
 
@@ -145,18 +141,23 @@ public class PostService {
                 .anyMatch(r -> r.getUserRole() == UserRoleEnum.ADMIN);
     }
 
+    public boolean isModerator(String username) {
+        return this.userService.getUserByUsername(username).getUserRoles().stream()
+                .anyMatch(r -> r.getUserRole() == UserRoleEnum.MODERATOR);
+    }
+
     protected Post getPostById(Long postId) {
         return this.postRepository
                 .findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("Post with id " + postId +
-                        " not found. Please try searching for different post."));
+                        " not found."));
     }
 
     public List<PostDisplayView> getAllPostsByUsername(String username) {
         return this.postRepository
                 .findAllByOwnerUsername(username)
                 .stream()
-                .map(p -> modelMapper.map(p,PostDisplayView.class))
+                .map(p -> modelMapper.map(p, PostDisplayView.class))
                 .collect(Collectors.toList());
     }
 
@@ -184,4 +185,22 @@ public class PostService {
 
         return postVoteDTO;
     }
+
+    private Page<PostDisplayView> mapPosts(Page<Post> posts) {
+        return posts
+                .map(p -> modelMapper.map(p, PostDisplayView.class))
+                .map(p -> {
+                    User user = this.userService.getCurrentUser();
+                    if (user != null) {
+                        Vote vote = this.voteService.findVoteByUserAndPost(
+                                user,
+                                this.getPostById(p.getId())
+                        );
+                        p.setUpvoteStatus(vote.getValue());
+                    }
+                    p.setCommentCount(this.commentService.findCommentCountOnPost(p.getId()));
+                    return p;
+                });
+    }
+
 }

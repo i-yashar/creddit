@@ -136,3 +136,7 @@ body {
     background-color: #e2eff1;
     background-image: linear-gradient(to bottom, #f0f5f9 50%, transparent);
 }
+
+.creddit-breadcrumb {
+    background-color: white;
+}

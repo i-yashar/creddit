@@ -4,7 +4,6 @@ import bg.softuni.creddit.model.dto.AddCommentDTO;
 import bg.softuni.creddit.model.dto.AddPostDTO;
 import bg.softuni.creddit.service.CommentService;
 import bg.softuni.creddit.service.PostService;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.URI;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
@@ -25,9 +23,11 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
-    public PostController(PostService postService, CommentService commentService) {
+    public PostController(PostService postService, CommentService commentService, CommentService commentService1) {
         this.postService = postService;
+        this.commentService = commentService1;
     }
 
     @ModelAttribute("addCommentDTO")
@@ -49,6 +49,18 @@ public class PostController {
                 .collect(Collectors.toList()));
 
         return "post-comments";
+    }
+
+    @GetMapping("/{postId}/comments/{commentId}/delete")
+    @PreAuthorize("@commentService.isOwner(#principal.name, #commentId)" +
+            "or @postService.isAdmin(#principal.name)" +
+            "or @postService.isModerator(#principal.name)")
+    public String deleteComment(@PathVariable("postId") Long postId,
+                                @PathVariable("commentId") Long commentId,
+                                Principal principal) {
+        this.commentService.deleteComment(commentId);
+
+        return "redirect:/posts/" + postId + "/comments";
     }
 
     @GetMapping("/addPost")
@@ -98,7 +110,9 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/delete")
-    @PreAuthorize("@postService.isOwner(#principal.name, #postId) or @postService.isAdmin(#principal.name)")
+    @PreAuthorize("@postService.isOwner(#principal.name, #postId)" +
+            "or @postService.isAdmin(#principal.name)" +
+            "or @postService.isModerator(#principal.name)")
     public String deletePost(@PathVariable("postId") Long postId, Principal principal, HttpServletRequest request) {
         this.postService.deletePost(postId);
 

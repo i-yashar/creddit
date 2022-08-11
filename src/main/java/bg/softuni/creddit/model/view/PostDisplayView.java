@@ -7,9 +7,18 @@ public class PostDisplayView {
     private String owner;
     private String description;
     private int upvoteCount;
+    private int commentCount;
     private int upvoteStatus = 0;
 
     public PostDisplayView() {
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     public int getUpvoteStatus() {

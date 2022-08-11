@@ -37,7 +37,7 @@
                         <ul class="list-inline list-inline-dotted mb-0">
                             <li class="list-inline-item">
                                 <a class="upVoteBtn btn" th:classappend="${post.getUpvoteStatus() == 1} ? 'btn-success' : 'btn-primary'" href="javascript:void(0)"
-                                   role="button">Upvote <span class="badge bg-secondary"
+                                   role="button">Upvote <span class="badge badge-light"
                                                               th:text="${post.upvoteCount}">0</span></a>
                             </li>
                             <li class="list-inline-item">
@@ -48,7 +48,7 @@
                             <li class="list-inline-item">
                                 <a class="showCommentsBtn btn btn-primary"
                                    th:href="@{/posts/{postId}/comments(postId = ${post.id})}"
-                                   role="button">Show comments</a>
+                                   role="button">Show comments <span class="badge badge-light" th:text="${post.commentCount}">0</span> </a>
                             </li>
                             <li class="list-inline-item">
                                 <a class="addCommentBtn btn btn-primary"
@@ -56,8 +56,8 @@
                                    role="button">Add comment</a>
                             </li>
                             <li class="list-inline-item"
-                                th:if="${#authentication.name == post.owner} or ${roles.contains('ROLE_ADMIN')}">
-                                <a class="deleteBtn btn btn-primary" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
+                                th:if="${#authentication.name == post.owner} or ${roles.contains('ROLE_ADMIN')} or ${roles.contains('ROLE_MODERATOR')}">
+                                <a class="deleteBtn btn btn-danger" th:href="@{/posts/{postId}/delete(postId = ${post.id})}"
                                    role="button">Delete</a>
                             </li>
                         </ul>

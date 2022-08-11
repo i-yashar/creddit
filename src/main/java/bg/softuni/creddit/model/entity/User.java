@@ -3,6 +3,7 @@ package bg.softuni.creddit.model.entity;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,7 +31,7 @@ public class User {
     private String lastName;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<UserRole> userRoles;
+    private Set<UserRole> userRoles;
 
     @OneToMany(mappedBy = "user")
     private List<Vote> votes;
@@ -42,20 +43,10 @@ public class User {
 
     private String profilePicUrl;
 
-    private Integer createdCommunitiesCount;
-
     @OneToMany(mappedBy = "owner")
     private List<Post> posts;
 
     public User() {
-    }
-
-    public Integer getCreatedCommunitiesCount() {
-        return createdCommunitiesCount;
-    }
-
-    public void setCreatedCommunitiesCount(Integer createdCommunitiesCount) {
-        this.createdCommunitiesCount = createdCommunitiesCount;
     }
 
     public String getProfilePicUrl() {
@@ -82,11 +73,11 @@ public class User {
         this.votes = votes;
     }
 
-    public List<UserRole> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(List<UserRole> userRoles) {
+    public void setUserRoles(Set<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
 

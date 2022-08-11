@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head::head"></head>
+<head th:replace="fragments/head::head">
+</head>
+<link rel="stylesheet" type="text/css" href="/css/admins.css"/>
 
 
 <body>
@@ -12,6 +14,43 @@
 
 <div class="container">
   <h2 class="text-center text-white">A page for admins</h2>
+
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <div class="career-search mb-60">
+
+          <div class="filter-result">
+            <p class="mb-30 ff-montserrat">Total Users : <span th:text="${users.size()}">User count</span></p>
+
+            <div th:each="user : ${users}" class="job-box d-md-flex align-items-center justify-content-between mb-30">
+              <div class="job-left my-2 d-md-flex align-items-center flex-wrap">
+                <div class="job-content">
+                  <h5 class="text-center text-md-left" th:text="${user.username}">Username</h5>
+                </div>
+              </div>
+              <div class="job-right my-2 flex-shrink-0">
+                <ul class="list-inline my-2">
+                  <li class="list-inline-item">
+                    <a th:href="@{/users/{username}/profile(username = ${user.username})}" class="btn d-block w-100 d-sm-inline-block btn-primary">Visit profile</a>
+                  </li>
+                  <th:block th:if="${!user.roles.contains('ADMIN')}">
+                    <li th:if="${!user.roles.contains('MODERATOR')}" class="list-inline-item">
+                      <a th:href="@{/users/{username}/makeModerator(username = ${user.username})}" class="btn d-block w-100 d-sm-inline-block btn-success">Make moderator</a>
+                    </li>
+                    <li th:if="${user.roles.contains('MODERATOR')}" class="list-inline-item">
+                      <a th:href="@{/users/{username}/revokeModerator(username = ${user.username})}" class="btn d-block w-100 d-sm-inline-block btn-danger">Revoke moderator</a>
+                    </li>
+                  </th:block>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
 </div>
 
 <div>
