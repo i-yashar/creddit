@@ -13,10 +13,8 @@
     <div class="row">
         <div th:each="community : ${communities}" class="col-md-4">
             <div class="card allCommunityCard" style="width: 18rem;">
-                <img th:src="@{${community.communityPhotoUrl}}" class="card-img-top" alt="..." width="300" height="200">
                 <div class="card-body">
                     <h5 th:text="${community.name}" class="card-title">Community name</h5>
-                    <h6 th:text="${community.owner}" class="card-subtitle mb-2 text-muted">Community owner</h6>
                     <p th:text="${community.description}" class="card-text">Community description</p>
                     <a th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)})}" class="btn mr-2"><i class="fas fa-link"></i> Visit Community</a>
                 </div>

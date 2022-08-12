@@ -3,14 +3,15 @@ package bg.softuni.creddit.service;
 import bg.softuni.creddit.exception.notfound.CommentNotFoundException;
 import bg.softuni.creddit.model.dto.CommentVoteDTO;
 import bg.softuni.creddit.model.entity.*;
+import bg.softuni.creddit.model.entity.enums.UserRoleEnum;
 import bg.softuni.creddit.model.view.CommentDisplayView;
 import bg.softuni.creddit.repository.CommentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -135,10 +136,42 @@ public class CommentService {
                 });
     }
 
-    public void deleteComment(Long commentId) {
-        this.commentVoteService.deleteAllCommentVotesOnComment(commentId);
+    public String cleanUpBadComments() {
+        Set<String> users = new HashSet<>();
+        AtomicInteger count = new AtomicInteger(0);
 
-        Comment comment = this.getCommentById(commentId);
+        this.commentRepository.findAll()
+                .forEach(c -> {
+                    if(c.getUpvoteCount() <= -5) {
+                        User owner = c.getOwner();
+                        deleteComment(c);
+                        if(owner.getUserRoles().stream().anyMatch(userRole -> userRole.getUserRole() == UserRoleEnum.MODERATOR)) {
+                            this.userService.demoteToUser(owner.getUsername());
+                        }
+                        users.add(owner.getUsername());
+                        count.incrementAndGet();
+                    }
+                });
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(count.get()).append(" ").append(" comments deleted. ").append(count.get() > 0 ? "Users: " : "No users ");
+
+        for (String user : users) {
+            sb.append(user).append(" ");
+        }
+
+        sb.append("had their MODERATOR privileges revoked.");
+
+        return sb.toString();
+    }
+
+    public void deleteComment(Long commentId) {
+        this.deleteComment(this.getCommentById(commentId));
+    }
+
+    private void deleteComment(Comment comment) {
+        this.commentVoteService.deleteAllCommentVotesOnComment(comment.getId());
+
         this.commentRepository.delete(comment);
     }
 }

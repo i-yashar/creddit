@@ -12,27 +12,28 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashSet;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CommunityControllerIT {
+public class CommunityControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private TestDataUtils testDataUtils;
 
-    private User testUser;
+    private User testUser, testModerator, testAdmin;
 
     private Community testCommunity;
 
     @BeforeEach
     void setUp() {
         testUser = testDataUtils.createTestUser("testUser");
+        testModerator = testDataUtils.createTestModerator("testModerator");
+        testAdmin = testDataUtils.createTestAdmin("testAdmin");
         testCommunity = testDataUtils.createTestCommunity(testUser);
     }
 
@@ -62,7 +63,8 @@ public class CommunityControllerIT {
 
     @Test
     @WithMockUser(
-            username = "testUser"
+            username = "testModerator",
+            roles = {"USER", "MODERATOR"}
     )
     void testJoinCommunity() throws Exception {
         mockMvc.perform(get("/communities/{communityName}/join", testCommunity.getName().substring(1)))
@@ -72,7 +74,8 @@ public class CommunityControllerIT {
 
     @Test
     @WithMockUser(
-            username = "testUser"
+            username = "testModerator",
+            roles = {"USER", "MODERATOR"}
     )
     void testLeaveCommunity() throws Exception {
         testJoinCommunity();
@@ -90,5 +93,41 @@ public class CommunityControllerIT {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("create-community"))
                 .andExpect(model().attributeExists("createCommunityDTO"));
+    }
+
+    @Test
+    @WithMockUser(
+            username = "testUser",
+            roles = "USER"
+    )
+    void testCreateCommunity() throws Exception {
+
+        mockMvc.perform(post("/communities/create")
+                .sessionAttr("number", 4)
+                .param("name", "_testCreateCommunity")
+                .param("description", "test description")
+                .param("communityPhotoUrl", "testPhoto://test.png")
+                .param("answer", "even")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/communities/testCreateCommunity"));
+    }
+
+    @Test
+    @WithMockUser(
+            username = "testUser",
+            roles = "USER"
+    )
+    void testCreateCommunity_CommunityAlreadyExists() throws Exception {
+
+        mockMvc.perform(post("/communities/create")
+                        .sessionAttr("number", 4)
+                        .param("name", "_testCommunity")
+                        .param("description", "test description")
+                        .param("communityPhotoUrl", "testPhoto://test.png")
+                        .param("answer", "even")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/community/create"));
     }
 }

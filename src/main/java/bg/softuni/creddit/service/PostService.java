@@ -7,6 +7,7 @@ import bg.softuni.creddit.model.dto.PostVoteDTO;
 import bg.softuni.creddit.model.entity.*;
 import bg.softuni.creddit.model.entity.enums.UserRoleEnum;
 import bg.softuni.creddit.model.view.CommentDisplayView;
+import bg.softuni.creddit.model.view.CommunityView;
 import bg.softuni.creddit.model.view.PostDisplayView;
 import bg.softuni.creddit.repository.PostRepository;
 import org.modelmapper.ModelMapper;
@@ -45,6 +46,16 @@ public class PostService {
 
     public Page<PostDisplayView> retrieveAllPostsPaginationEnabled(Pageable pageable) {
         Page<Post> allPosts = this.postRepository.findByOrderByCreatedOnDesc(pageable);
+
+        return this.mapPosts(allPosts);
+    }
+
+    public Page<PostDisplayView> retrieveAllUserCommunityPostsPaginationEnabled(String username, Pageable pageable) {
+        List<Long> communityIds = this.communityService.getUserCommunities(username).stream()
+                .map(CommunityView::getId)
+                .collect(Collectors.toList());
+
+        Page<Post> allPosts = this.postRepository.findByCommunityIdInOrderByCreatedOnDesc(communityIds, pageable);
 
         return this.mapPosts(allPosts);
     }

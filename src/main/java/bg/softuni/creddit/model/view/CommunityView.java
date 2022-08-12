@@ -3,6 +3,7 @@ package bg.softuni.creddit.model.view;
 import java.time.LocalDate;
 
 public class CommunityView {
+    private Long id;
     private String name;
     private String description;
     private String owner;
@@ -11,6 +12,14 @@ public class CommunityView {
     private boolean hasCurrentUserJoined = false;
 
     public CommunityView() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isHasCurrentUserJoined() {

@@ -28,7 +28,12 @@
                             <label for="lastName" class="text-white font-weight-bold">Last Name</label>
                             <input id="lastName" type="text" th:field="*{lastName}" class="mt-0 mb-0"></input>
                             <label for="username" class="text-white font-weight-bold">Username</label>
-                            <input id="username" type="text" th:field="*{username}" class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i></input>
+                            <input id="username" type="text" th:field="*{username}" th:errorclass="is-invalid" class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i></input>
+                            <div class="invalid-feedback errors alert alert-danger">
+                                <div th:each="err : ${#fields.errors('username')}">
+                                    <span th:text="${err}"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

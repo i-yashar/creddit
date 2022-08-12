@@ -101,7 +101,7 @@ public class PostController {
         if(bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("addCommentDTO", addCommentDTO);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.addCommentDTO", bindingResult);
-            return "redirect:/posts/addComment/addPost/" + postId;
+            return "redirect:/posts/" + postId + "/addComment";
         }
 
         this.postService.addComment(addCommentDTO, postId, principal.getName());

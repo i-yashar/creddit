@@ -12,8 +12,7 @@
 <div class="container-fluid">
     <div class="row text-justify">
         <div class="mx-auto col-8 bg-transparent text-white">
-            <h2 class="text-center text-justify text-white">Welcome to dashboard!</h2>
-            <h3>Our trending posts</h3>
+            <h2 class="text-center text-justify text-dark">Welcome to dashboard!</h2>
 
             <div th:each="post : ${posts}" class="post-frame card card-body mt-3">
                 <div th:id="${'postNo' + post.id}" class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">

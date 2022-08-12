@@ -3,13 +3,13 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-    background-color: #8da9c4;
-    background-image: linear-gradient(to bottom, #8ecae6, transparent);
+    background-color: #b8d6f2;
+    background-image: linear-gradient(to bottom, #e3f0fc, transparent);
 }
 
 
 .navbar {
-    background-color: #e2eff1;
+    background-color: aliceblue;
     background-image: linear-gradient(to bottom, #f0f5f9 50%, transparent);
     font-weight: bold;
 }
@@ -30,7 +30,7 @@ body {
 
 .post-frame {
     background-color: white;
-    background-image: linear-gradient(0deg, #d6ecfa, transparent);
+    background-image: linear-gradient(0deg, #f7fafc, transparent);
 }
 
 .mt-50{
@@ -123,14 +123,6 @@ body {
     margin-bottom: 2rem;
 }
 
-.allCommunityCard .btn:hover, .allCommunityCard .btn:focus {
-    background: var(--gradient) !important;
-    -webkit-background-clip: none !important;
-    -webkit-text-fill-color: #fff !important;
-    border: 2px solid #fff !important;
-    box-shadow: #222 1px 0 10px;
-    text-decoration: underline;
-}
 
 .welcomePage {
     background-color: #e2eff1;

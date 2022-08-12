@@ -12,14 +12,7 @@
 <div class="container">
     <div class="main-body">
 
-<!--        <nav aria-label="breadcrumb" class="main-breadcrumb">-->
-<!--            <ol class="creddit-breadcrumb breadcrumb">-->
-<!--                <li class="breadcrumb-item"><a href="/">Home</a></li>-->
-<!--                <li class="breadcrumb-item active" aria-current="page">Create new community</li>-->
-<!--            </ol>-->
-<!--        </nav>-->
-
-        <h2 class="text-white font-weight-bold text-center">Create new community</h2>
+        <h2 class="text-dark font-weight-bold text-center">Create new community</h2>
 
         <form
                 th:action="@{/communities/create}"
@@ -36,7 +29,15 @@
                                        class="mt-0 mb-0"/>
 
                                 <label for="communityName" class="font-weight-bold">Community Name</label>
-                                <input id="communityName" type="text" th:field="*{name}" class="mt-0 mb-0"/>
+                                <input id="communityName" type="text"
+                                       th:field="*{name}"
+                                       th:errorclass="is-invalid"
+                                       class="mt-0 mb-0"/>
+                                <div class="invalid-feedback errors alert alert-danger">
+                                    <div th:each="err : ${#fields.errors('name')}">
+                                        <span th:text="${err}"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -47,8 +48,14 @@
                             <textarea id="aboutInfo" style="resize: none" rows="5" cols="80"
                                       form="createCommunityForm"
                                       th:field="*{description}"
+                                      th:errorclass="is-invalid"
                                       name="description"
                                       class="form-control small mb-4"></textarea>
+                            <div class="invalid-feedback errors alert alert-danger">
+                                <div th:each="err : ${#fields.errors('description')}">
+                                    <span th:text="${err}"></span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="pb-3 px-5 d-flex flex-column align-items-center text-center">

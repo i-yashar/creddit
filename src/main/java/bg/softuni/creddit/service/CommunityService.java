@@ -36,6 +36,12 @@ public class CommunityService {
                 .collect(Collectors.toList());
     }
 
+    public List<CommunityView> getUserCommunities(String username) {
+        return this.communityRepository.getAllUserCommunities(username).stream()
+                .map(c -> modelMapper.map(c, CommunityView.class))
+                .collect(Collectors.toList());
+    }
+
     public CommunityView getCommunity(String communityName) {
         CommunityView communityView = modelMapper.map(
                 this.getCommunityByName(communityName),

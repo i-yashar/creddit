@@ -37,10 +37,14 @@ public class DashboardController {
                                 page = 0
                         ) Pageable pageable,
                         Principal principal) {
-        model.addAttribute("posts", this.postService.retrieveAllPostsPaginationEnabled(pageable));
+
+        model.addAttribute("posts", principal != null
+                ? this.postService.retrieveAllUserCommunityPostsPaginationEnabled(principal.getName(), pageable)
+                : this.postService.retrieveAllPostsPaginationEnabled(pageable));
         model.addAttribute("roles", SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
+
         return "dashboard";
     }
 

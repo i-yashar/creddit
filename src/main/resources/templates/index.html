@@ -7,21 +7,42 @@
 <body>
 
 <div th:replace="fragments/navbar :: navbar">
-  Navbar
+    Navbar
 </div>
 
-<div class="welcomePage jumbotron mt-5 mx-auto col-8">
-  <h1 class="display-4">Welcome to Creddit!</h1>
-  <p class="lead">Creddit is an awesome forum website, with many awesome communities and users who are open for discussion on any topic that you have!</p>
-  <hr class="my-4">
-  <div sec:authorize="isAnonymous()" class="row">
-    <p class="lead"><a href="/users/login">Log in</a> to start exploring what's popular among our users and share what you think.</p>
-    <p class="lead">Don't have a profile yet? <a href="/users/register">Register</a> now to be part of our awesome community.</p>
-  </div>
+<div class="welcomePage jumbotron mt-5 pb-3 mx-auto col-8">
+    <h1 sec:authorize="isAuthenticated()" class="display-4">Welcome to Creddit, <span th:text="${user}"></span>!</h1>
+    <h1 sec:authorize="isAnonymous()" class="display-4">Welcome to Creddit!</h1>
+    <p sec:authorize="isAnonymous()" class="lead">Creddit is an awesome forum website, with many awesome communities and
+        users who are open for discussion on any topic that you have!</p>
+    <hr class="my-4">
+    <div sec:authorize="isAnonymous()" class="row">
+        <p class="lead"><a href="/users/login">Log in</a> to start exploring what's popular among our users and share
+            what you think.</p>
+        <p class="lead">Don't have a profile yet? <a href="/users/register">Register</a> now to be part of our awesome
+            community.</p>
+    </div>
+    <div sec:authorize="isAuthenticated()" class="row">
+        <p class="lead">Your communities:</p>
+    </div>
+    <div class="container mx-auto mt-4">
+        <div sec:authorize="isAuthenticated()" class="row">
+            <div th:each="community : ${communities}" class="col-md-4 col-sm-6">
+                <div class="card allCommunityCard" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 th:text="${community.name}" class="card-title">Community name</h5>
+                        <p th:text="${community.description}" class="card-text">Community description</p>
+                        <a th:href="@{/communities/{communityName}(communityName = ${#strings.substring(community.name, 1)})}"
+                           class="btn mr-2"><i class="fas fa-link"></i> Visit Community</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div>
-  <footer></footer>
+    <footer></footer>
 </div>
 </body>
 </html>

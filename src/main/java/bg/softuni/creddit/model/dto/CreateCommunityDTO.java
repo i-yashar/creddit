@@ -1,14 +1,17 @@
 package bg.softuni.creddit.model.dto;
 
+import bg.softuni.creddit.model.validation.UniqueCommunity;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class CreateCommunityDTO {
 
     @Size(min = 4, max = 20)
+    @UniqueCommunity(message = "Community already exists.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Description can't be blank.")
     private String description;
     private String communityPhotoUrl;
 

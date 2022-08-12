@@ -1,6 +1,6 @@
 package bg.softuni.creddit.web;
 
-import bg.softuni.creddit.service.PostService;
+import bg.softuni.creddit.service.CommunityService;
 import bg.softuni.creddit.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -11,16 +11,20 @@ import java.security.Principal;
 
 @Controller
 public class HomeController {
-    private final PostService postService;
     private final UserService userService;
+    private final CommunityService communityService;
 
-    public HomeController(PostService postService, UserService userService) {
-        this.postService = postService;
+    public HomeController(UserService userService, CommunityService communityService) {
         this.userService = userService;
+        this.communityService = communityService;
     }
 
     @GetMapping(path = {"", "/"})
-    public String index(Model model) {
+    public String index(Model model, Principal principal) {
+        if(principal != null) {
+            model.addAttribute("user", principal.getName());
+            model.addAttribute("communities", this.communityService.getUserCommunities(principal.getName()));
+        }
         return "index";
     }
 

@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 public class UserProfileEditDTO {
     private String firstName;
     private String lastName;
+    @UniqueUsername(message = "Username is taken.")
     private String username;
     private String profilePicUrl;
     private String about;
