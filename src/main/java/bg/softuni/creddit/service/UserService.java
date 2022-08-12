@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,10 +76,13 @@ public class UserService {
 
     public void registerAndLogin(UserRegisterDTO userRegisterDTO) {
         User user = modelMapper.map(userRegisterDTO, User.class);
+        UserRole userRole = this.userRoleRepository.findByUserRoleLike(UserRoleEnum.USER).get();
 
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         user.setRegisteredOn(LocalDateTime.now());
         user.setCredits(0);
+        user.setUserRoles(new HashSet<>());
+        user.getUserRoles().add(userRole);
         user.setAbout("You don't have any info in your about section yet. Click edit profile and type something interesting about yourself :)");
         user.setProfilePicUrl("https://images.unsplash.com/placeholder-avatars/extra-large.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128&s=ee8bbf5fb8d6e43aaaa238feae2fe90d");
 
